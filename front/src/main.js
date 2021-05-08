@@ -32,12 +32,8 @@ import 'semantic-ui-css/semantic.min.css';
 
 export const eventBus = new Vue();
 
+import '../vue.custom.config';
 
-Vue.config.productionTip = false;
-Vue.config.API_URL = "https://api.artemdev.ru/api/";
-Vue.config.IMAGE_URL = "https://api.artemdev.ru";
-Vue.config.BASE_URL = "https://artemdev.ru";
-Vue.config.TG_BOT = "artemdevrubot";
 Vue.use(Argon);
 Vue.use(VS2);
 Vue.use(SuiVue);
@@ -47,72 +43,72 @@ Vue.use(Buefy)
 Vue.use(Editor);
 
 Vue.use(VueTimeline, {
-    // Specify the theme to use: dark or light (dark by default).
-    theme: "light",
+	// Specify the theme to use: dark or light (dark by default).
+	theme: "light",
 });
 
 console.log('api_url');
 
 const store = new Vuex.Store({
-    state: {
-        api_token: localStorage.getItem('api_token') || undefined,
-        isdeveloper: false,
-        isauth: false,
-        user: null,
+	state: {
+		api_token: localStorage.getItem('api_token') || undefined,
+		isdeveloper: false,
+		isauth: false,
+		user: null,
 
-    },
-    getters: {
-        TOKEN: state => {
-            return state.api_token;
-        },
-        ISDEVELOPER: state => {
-            return state.isdeveloper;
-        },
-        ISAUTH: state => {
-            return state.isauth;
-        },
-        USER: state => {
-            return state.user
-        }
-    },
+	},
+	getters: {
+		TOKEN: state => {
+			return state.api_token;
+		},
+		ISDEVELOPER: state => {
+			return state.isdeveloper;
+		},
+		ISAUTH: state => {
+			return state.isauth;
+		},
+		USER: state => {
+			return state.user
+		}
+	},
 
-    mutations: {
+	mutations: {
 
-        SET_TOKEN: (state, payload) => {
+		SET_TOKEN: (state, payload) => {
 
-            state.api_token = payload;
-        },
-        SET_ISDEVELOPER: (state, payload) => {
-            state.isdeveloper = payload;
-        },
-        SET_ISAUTH: (state, payload) => {
-            state.isauth = payload;
-        },
-        SET_USER: (state, payload) => {
-            state.user = payload;
-        }
-    }
+			state.api_token = payload;
+		},
+		SET_ISDEVELOPER: (state, payload) => {
+			state.isdeveloper = payload;
+		},
+		SET_ISAUTH: (state, payload) => {
+			state.isauth = payload;
+		},
+		SET_USER: (state, payload) => {
+			state.user = payload;
+		}
+	}
 })
 
 
 Vue.mixin({
-    methods: {
-        Logout() {
-            var app = this;
-            localStorage.removeItem('api_token');
-            app.$store.commit('SET_ISAUTH', false);
-            app.$store.commit('SET_USER', null);
-            eventBus.$emit('user_is_login', null);
-            window.location.href = "/";
-        }
+	methods: {
+		Logout() {
+			var app = this;
+			localStorage.removeItem('api_token');
+			app.$store.commit('SET_ISAUTH', false);
+			app.$store.commit('SET_USER', null);
+			eventBus.$emit('user_is_login', null);
+			window.location.href = "/";
+		}
 
 
-    }
+	}
 });
 const vm = new Vue({
-    router,
-    store,
-    render: h => h(App)
+	router,
+	store,
+	render: h => h(App)
 }).$mount("#app");
 
 export {vm}

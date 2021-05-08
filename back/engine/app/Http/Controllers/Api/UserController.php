@@ -21,7 +21,7 @@ class UserController extends Controller
             return array('type' => 'error', 'message' => 'Авторизация не удалась.Попробуйте указать Имя в Telegram');
         }
 
-
+        
         $result = Telegram::checkTelegramAuthorization($post);
 
 

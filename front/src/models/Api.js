@@ -4,750 +4,780 @@ import {eventBus, vm} from "@/main";
 
 export default class Api {
 
-    static loadAbout(success) {
+	static loadPage(id, success) {
+		axios.get(Vue.config.API_URL + 'page/' + id)
+			.then(function (resp) {
 
-        axios.get(Vue.config.API_URL + 'about')
-            .then(function (resp) {
+				if (resp.data.type && resp.data.type == "success") {
+					success(resp.data.page);
+				}
 
 
-                success(resp.data);
+			})
+			.catch(function () {
 
+			});
+	}
 
-            })
-            .catch(function () {
+	static loadPages(success) {
 
-            });
-    }
+		axios.get(Vue.config.API_URL + 'pages')
+			.then(function (resp) {
 
-    static loadStatsInvoices(success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'invoices/stats')
-            .then(function (resp) {
 
+				success(resp.data);
 
-                success(resp.data);
 
+			})
+			.catch(function () {
 
-            })
-            .catch(function () {
+			});
+	}
 
-            });
-    }
+	static loadAbout(success) {
 
-    static loadStats(success) {
+		axios.get(Vue.config.API_URL + 'about')
+			.then(function (resp) {
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/stats')
-            .then(function (resp) {
 
+				success(resp.data);
 
-                success(resp.data);
 
+			})
+			.catch(function () {
 
-            })
-            .catch(function () {
+			});
+	}
 
-            });
-    }
+	static loadStatsInvoices(success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'invoices/stats')
+			.then(function (resp) {
 
-    static setReadAllNotify(success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'notify/readall')
-            .then(function (resp) {
 
+				success(resp.data);
 
-                success(resp.data);
 
+			})
+			.catch(function () {
 
-            })
-            .catch(function () {
+			});
+	}
 
-            });
-    }
+	static loadStats(success) {
 
-    static setRemoveNotify(notify_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'notify/remove/' + notify_id)
-            .then(function (resp) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/stats')
+			.then(function (resp) {
 
 
-                success(resp.data);
+				success(resp.data);
 
 
-            })
-            .catch(function () {
+			})
+			.catch(function () {
 
-            });
-    }
+			});
+	}
 
-    static setReadNotify(notify_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'notify/setread/' + notify_id)
-            .then(function (resp) {
+	static setReadAllNotify(success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'notify/readall')
+			.then(function (resp) {
 
 
-                success(resp.data);
+				success(resp.data);
 
 
-            })
-            .catch(function () {
+			})
+			.catch(function () {
 
-            });
-    }
+			});
+	}
 
-    static loadNotifyCount(success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'notify/count')
-            .then(function (resp) {
+	static setRemoveNotify(notify_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'notify/remove/' + notify_id)
+			.then(function (resp) {
 
 
-                success(resp.data);
+				success(resp.data);
 
 
-            })
-            .catch(function () {
+			})
+			.catch(function () {
 
-            });
-    }
+			});
+	}
 
-    static sendReview(params, id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'invoices/sendreview/' + id, params)
-            .then(function (resp) {
+	static setReadNotify(notify_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'notify/setread/' + notify_id)
+			.then(function (resp) {
 
-                if (resp.data.type == "success") {
 
-                    success(resp.data);
-                } else {
-                    error(resp.data.message);
-                }
+				success(resp.data);
 
 
-            })
-            .catch(function () {
-                error("Произошла ошибка!");
-            });
-    }
+			})
+			.catch(function () {
 
-    static loadNotify(params, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'notify/all', params)
-            .then(function (resp) {
+			});
+	}
 
+	static loadNotifyCount(success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'notify/count')
+			.then(function (resp) {
 
-                success(resp.data);
 
+				success(resp.data);
 
-            })
-            .catch(function () {
 
-            });
-    }
+			})
+			.catch(function () {
 
-    static loadUserPortfolio() {
-        console.log('from api!');
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'portfolio/all')
-            .then(function (resp) {
+			});
+	}
 
+	static sendReview(params, id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'invoices/sendreview/' + id, params)
+			.then(function (resp) {
 
-                eventBus.$emit('load_portfolio_user', resp.data);
+				if (resp.data.type == "success") {
 
+					success(resp.data);
+				} else {
+					error(resp.data.message);
+				}
 
-            })
-            .catch(function () {
 
-            });
-    }
+			})
+			.catch(function () {
+				error("Произошла ошибка!");
+			});
+	}
 
+	static loadNotify(params, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'notify/all', params)
+			.then(function (resp) {
 
-    static loadUserInfo(token) {
 
+				success(resp.data);
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + token;
-        axios.get(Vue.config.API_URL + 'user')
-            .then(function (resp) {
 
-                vm.$store.commit('SET_ISAUTH', true);
-                resp.data.api_token = token;
-                vm.$store.commit('SET_USER', resp.data);
+			})
+			.catch(function () {
 
-                if (resp.data.isdeveloper == 1) {
+			});
+	}
 
-                    vm.$store.commit('SET_ISDEVELOPER', true);
-                } else {
-                    vm.$store.commit('SET_ISDEVELOPER', false);
-                }
+	static loadUserPortfolio() {
+		console.log('from api!');
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'portfolio/all')
+			.then(function (resp) {
 
 
-                eventBus.$emit('user_is_login', resp.data);
-                eventBus.$emit('update_user_info', vm.$store.getters.ISAUTH, vm.$store.getters.ISDEVELOPER);
-                var url_after_redirect = localStorage.getItem('url_after_login');
-                if (url_after_redirect) {
-                    url_after_redirect = JSON.parse(url_after_redirect);
-                    localStorage.removeItem('url_after_login');
-                    console.log('url after redirect');
-                    console.log(url_after_redirect);
-                    vm.$router.push(url_after_redirect);
-                }
+				eventBus.$emit('load_portfolio_user', resp.data);
 
 
-            })
-            .catch(function () {
-                eventBus.$emit('user_is_login', null);
-            });
-    }
+			})
+			.catch(function () {
 
+			});
+	}
 
-    static loadCategorys(callback) {
 
+	static loadUserInfo(token) {
 
-        axios.get(Vue.config.API_URL + 'categorys/all')
-            .then(function (resp) {
 
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + token;
+		axios.get(Vue.config.API_URL + 'user')
+			.then(function (resp) {
 
-                callback(resp.data);
+				vm.$store.commit('SET_ISAUTH', true);
+				resp.data.api_token = token;
+				vm.$store.commit('SET_USER', resp.data);
 
+				if (resp.data.isdeveloper == 1) {
 
-            })
-            .catch(function () {
+					vm.$store.commit('SET_ISDEVELOPER', true);
+				} else {
+					vm.$store.commit('SET_ISDEVELOPER', false);
+				}
 
-            });
-    }
 
-    static loadPortfolioCategorys() {
+				eventBus.$emit('user_is_login', resp.data);
+				eventBus.$emit('update_user_info', vm.$store.getters.ISAUTH, vm.$store.getters.ISDEVELOPER);
+				var url_after_redirect = localStorage.getItem('url_after_login');
+				if (url_after_redirect) {
+					url_after_redirect = JSON.parse(url_after_redirect);
+					localStorage.removeItem('url_after_login');
+					console.log('url after redirect');
+					console.log(url_after_redirect);
+					vm.$router.push(url_after_redirect);
+				}
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'portfolio/categorys')
-            .then(function (resp) {
 
+			})
+			.catch(function () {
+				eventBus.$emit('user_is_login', null);
+			});
+	}
 
-                eventBus.$emit('load_portfolio_categorys', resp.data);
 
+	static loadCategorys(callback) {
 
-            })
-            .catch(function () {
 
-            });
-    }
+		axios.get(Vue.config.API_URL + 'categorys/all')
+			.then(function (resp) {
 
-    static loadInvoice(id) {
 
+				callback(resp.data);
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'invoices/get/' + id)
-            .then(function (resp) {
 
+			})
+			.catch(function () {
 
-                if (resp.data.type == "success") {
-                    eventBus.$emit('is_load_invoice', resp.data);
-                }
+			});
+	}
 
+	static loadPortfolioCategorys() {
 
-            })
-            .catch(function () {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'portfolio/categorys')
+			.then(function (resp) {
 
-            });
-    }
 
-    static loadProject(id) {
+				eventBus.$emit('load_portfolio_categorys', resp.data);
 
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/get/' + id)
-            .then(function (resp) {
+			})
+			.catch(function () {
 
+			});
+	}
 
-                if (resp.data.type == "success") {
+	static loadInvoice(id) {
 
-                    resp.data.project.json = JSON.parse(resp.data.project.json);
-                    eventBus.$emit('is_load_project', resp.data);
-                }
 
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'invoices/get/' + id)
+			.then(function (resp) {
 
-            })
-            .catch(function () {
 
-            });
-    }
+				if (resp.data.type == "success") {
+					eventBus.$emit('is_load_invoice', resp.data);
+				}
 
-    static loadInvoices() {
 
+			})
+			.catch(function () {
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'invoices/all')
-            .then(function (resp) {
+			});
+	}
 
+	static loadProject(id) {
 
-                eventBus.$emit('is_loaded_invoices', resp.data);
 
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/get/' + id)
+			.then(function (resp) {
 
-            })
-            .catch(function () {
 
-            });
-    }
+				if (resp.data.type == "success") {
 
-    static loadProjects(success) {
+					resp.data.project.json = JSON.parse(resp.data.project.json);
+					eventBus.$emit('is_load_project', resp.data);
+				}
 
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/all')
-            .then(function (resp) {
+			})
+			.catch(function () {
 
+			});
+	}
 
-                return success(resp.data);
+	static loadInvoices() {
 
 
-            })
-            .catch(function () {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'invoices/all')
+			.then(function (resp) {
 
-            });
-    }
 
-    static deleteUserPortfolio(id) {
+				eventBus.$emit('is_loaded_invoices', resp.data);
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'portfolio/delete/' + id)
-            .then(function (resp) {
 
+			})
+			.catch(function () {
 
-            })
-            .catch(function () {
+			});
+	}
 
-            });
-    }
+	static loadProjects(success) {
 
-    static removeInvoice(id, project_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/removeinvoice/' + id + "/" + project_id)
-            .then(function (resp) {
-                success(resp.data);
 
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/all')
+			.then(function (resp) {
 
-            })
-            .catch(function () {
 
-            });
-    }
+				return success(resp.data);
 
-    static addProjectInvoice(project_id, newInvoice, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'projects/addinvoice/' + project_id, newInvoice)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data);
-                } else {
-                    error(resp.data.message);
-                }
 
-            })
-            .catch(function (resp) {
-                error("Произошла ошибка!");
+			})
+			.catch(function () {
 
-            });
-    }
+			});
+	}
 
-    static chooseOfferProject(project_id, offer_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'freelance/choose/' + project_id + "/" + offer_id)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.project)
-                }
+	static deleteUserPortfolio(id) {
 
-            })
-            .catch(function (resp) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'portfolio/delete/' + id)
+			.then(function (resp) {
 
-            });
-    }
 
-    static sendSubComment(project_id, comment_id, comment, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'comments/sendsub/' + project_id + "/" + comment_id, {"comment": comment})
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.comments)
-                }
+			})
+			.catch(function () {
 
-            })
-            .catch(function (resp) {
+			});
+	}
 
-            });
-    }
+	static removeInvoice(id, project_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/removeinvoice/' + id + "/" + project_id)
+			.then(function (resp) {
+				success(resp.data);
 
-    static sendOfferComment(project_id, offer_id, comment, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'freelance/sendcomment/' + project_id + "/" + offer_id, {"comment": comment})
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.comments)
-                }
 
-            })
-            .catch(function (resp) {
+			})
+			.catch(function () {
 
-            });
-    }
+			});
+	}
 
-    static sendOffer(newOffer, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'freelance/send/' + newOffer.project_id, newOffer)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.offer)
-                } else {
-                    error(resp.data.message);
-                }
+	static addProjectInvoice(project_id, newInvoice, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'projects/addinvoice/' + project_id, newInvoice)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data);
+				} else {
+					error(resp.data.message);
+				}
 
-            })
-            .catch(function (resp) {
+			})
+			.catch(function (resp) {
+				error("Произошла ошибка!");
 
-                error("Произошла ошибка!");
-            });
-    }
+			});
+	}
 
-    static addComment(newComment, project_id, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'comments/add/' + project_id, newComment)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.comment)
-                } else {
-                    error(resp.data.message);
-                }
+	static chooseOfferProject(project_id, offer_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'freelance/choose/' + project_id + "/" + offer_id)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.project)
+				}
 
-            })
-            .catch(function (resp) {
+			})
+			.catch(function (resp) {
 
-                error("Произошла ошибка!");
-            });
-    }
+			});
+	}
 
-    static deleteSpectator(project_id, user_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'users/delete/' + project_id + "/" + user_id)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.users);
+	static sendSubComment(project_id, comment_id, comment, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'comments/sendsub/' + project_id + "/" + comment_id, {"comment": comment})
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.comments)
+				}
 
+			})
+			.catch(function (resp) {
 
-                } else {
+			});
+	}
 
-                    //   error(resp.data.message)
-                }
+	static sendOfferComment(project_id, offer_id, comment, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'freelance/sendcomment/' + project_id + "/" + offer_id, {"comment": comment})
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.comments)
+				}
 
-            })
-            .catch(function (resp) {
-                // error("Произошла ошибка!")
+			})
+			.catch(function (resp) {
 
-            });
-    }
+			});
+	}
 
-    static addUser(project_id, username, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'users/add/' + project_id, {"username": username})
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success(resp.data.users);
+	static sendOffer(newOffer, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'freelance/send/' + newOffer.project_id, newOffer)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.offer)
+				} else {
+					error(resp.data.message);
+				}
 
+			})
+			.catch(function (resp) {
 
-                } else {
+				error("Произошла ошибка!");
+			});
+	}
 
-                    error(resp.data.message)
-                }
+	static addComment(newComment, project_id, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'comments/add/' + project_id, newComment)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.comment)
+				} else {
+					error(resp.data.message);
+				}
 
-            })
-            .catch(function (resp) {
-                error("Произошла ошибка!")
+			})
+			.catch(function (resp) {
 
-            });
-    }
+				error("Произошла ошибка!");
+			});
+	}
 
-    static setAccount(account, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'setaccount', {"account": account})
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success();
+	static deleteSpectator(project_id, user_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'users/delete/' + project_id + "/" + user_id)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.users);
 
 
-                } else {
+				} else {
 
-                    error(resp.data.message)
-                }
+					//   error(resp.data.message)
+				}
 
-            })
-            .catch(function (resp) {
-                error("Произошла ошибка!")
+			})
+			.catch(function (resp) {
+				// error("Произошла ошибка!")
 
-            });
-    }
+			});
+	}
 
-    static setNewStatus(status_id, project_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/newstatus/' + project_id + "/" + status_id)
-            .then(function (resp) {
+	static addUser(project_id, username, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'users/add/' + project_id, {"username": username})
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.users);
 
 
-                success();
+				} else {
 
+					error(resp.data.message)
+				}
 
-            })
-            .catch(function () {
+			})
+			.catch(function (resp) {
+				error("Произошла ошибка!")
 
-            });
-    }
+			});
+	}
 
-    static approveInvoice(id, project_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/approveinvoice/' + id + "/" + project_id)
-            .then(function (resp) {
+	static setAccount(account, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'setaccount', {"account": account})
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success();
 
 
-                success(resp.data);
+				} else {
 
+					error(resp.data.message)
+				}
 
-            })
-            .catch(function () {
+			})
+			.catch(function (resp) {
+				error("Произошла ошибка!")
 
-            });
-    }
+			});
+	}
 
-    static completeInvoice(id, project_id, success) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'projects/completeinvoice/' + id + "/" + project_id)
-            .then(function (resp) {
+	static setNewStatus(status_id, project_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/newstatus/' + project_id + "/" + status_id)
+			.then(function (resp) {
 
-                success(resp.data);
 
+				success();
 
-            })
-            .catch(function () {
 
-            });
-    }
+			})
+			.catch(function () {
 
-    static login(to, next) {
-        console.log('to route');
-        console.log(to);
-        var token = localStorage.getItem('api_token');
+			});
+	}
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + token;
-        axios.get(Vue.config.API_URL + 'user')
-            .then(function (resp) {
+	static approveInvoice(id, project_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/approveinvoice/' + id + "/" + project_id)
+			.then(function (resp) {
 
-                next();
 
-            })
-            .catch(function () {
-                localStorage.setItem('url_after_login', JSON.stringify(to));
-                vm.$router.push({"name": "landing"});
+				success(resp.data);
 
 
-                // this.$router.push({"name": "project", "params": {"id": button.params.id, "rand": Math.random()}});
-                // vm.$forceUpdate();
-                // window.location.href = "/";
-            });
-    }
+			})
+			.catch(function () {
 
-    static addWork(newWork, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'portfolio/add', newWork)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
-                    success();
+			});
+	}
 
-                } else {
-                    error(resp.data.message);
+	static completeInvoice(id, project_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'projects/completeinvoice/' + id + "/" + project_id)
+			.then(function (resp) {
 
-                }
+				success(resp.data);
 
-            })
-            .catch(function (resp) {
 
-                error("Произошла ошибка!");
-            });
-    }
+			})
+			.catch(function () {
 
-    static invoiceSetPay(id, callback) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'invoices/setpay/' + id)
-            .then(function (resp) {
+			});
+	}
 
-                if (resp.data.type == "success") {
-                    callback();
-                }
+	static login(to, next) {
+		console.log('to route');
+		console.log(to);
+		var token = localStorage.getItem('api_token');
 
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + token;
+		axios.get(Vue.config.API_URL + 'user')
+			.then(function (resp) {
 
-            })
-            .catch(function () {
+				next();
 
-            });
-    }
+			})
+			.catch(function () {
+				localStorage.setItem('url_after_login', JSON.stringify(to));
+				vm.$router.push({"name": "landing"});
 
-    static invoiceFinishPay(id, callback) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'invoices/finishpay/' + id)
-            .then(function (resp) {
 
-                if (resp.data.type == "success") {
-                    callback()
-                }
+				// this.$router.push({"name": "project", "params": {"id": button.params.id, "rand": Math.random()}});
+				// vm.$forceUpdate();
+				// window.location.href = "/";
+			});
+	}
 
+	static addWork(newWork, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'portfolio/add', newWork)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success();
 
-            })
-            .catch(function () {
+				} else {
+					error(resp.data.message);
 
-            });
-    }
+				}
 
-    static addTask(editProject, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'projects/addtask/' + editProject.last_id, editProject)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
+			})
+			.catch(function (resp) {
 
-                    success(resp.data.tasks);
-                } else {
+				error("Произошла ошибка!");
+			});
+	}
 
-                    error(resp.data.message);
-                }
+	static invoiceSetPay(id, callback) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'invoices/setpay/' + id)
+			.then(function (resp) {
 
-            })
-            .catch(function (resp) {
-                error("Произошла ошибка");
+				if (resp.data.type == "success") {
+					callback();
+				}
 
-            });
-    }
 
-    static editProject(editProject, success, error) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'projects/edit_project/' + editProject.last_id, editProject)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
+			})
+			.catch(function () {
 
-                    success({iserror: false});
-                } else {
+			});
+	}
 
-                    error(resp.data.message);
-                }
+	static invoiceFinishPay(id, callback) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'invoices/finishpay/' + id)
+			.then(function (resp) {
 
-            })
-            .catch(function (resp) {
-                error("Произошла ошибка");
+				if (resp.data.type == "success") {
+					callback()
+				}
 
-            });
-    }
 
-    static createProject(newProject, callback) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.post(Vue.config.API_URL + 'projects/add', newProject)
-            .then(function (resp) {
-                //alert('Успешно!');
-                if (resp.data.type == "success") {
+			})
+			.catch(function () {
 
-                    callback({iserror: false, project_id: resp.data.project_id});
-                } else {
+			});
+	}
 
-                    callback({iserror: true, error_message: resp.data.message});
-                }
+	static addTask(editProject, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'projects/addtask/' + editProject.last_id, editProject)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
 
-            })
-            .catch(function (resp) {
-                callback({iserror: true, error_message: "Произошла ошибка"});
+					success(resp.data.tasks);
+				} else {
 
-            });
-    }
+					error(resp.data.message);
+				}
 
-    static loadDeveloperReviews(username, success) {
+			})
+			.catch(function (resp) {
+				error("Произошла ошибка");
 
+			});
+	}
 
-        axios.get(Vue.config.API_URL + 'developer/reviews/' + username)
-            .then(function (resp) {
+	static editProject(editProject, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'projects/edit_project/' + editProject.last_id, editProject)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
 
-                if (resp.data.type == "success") {
-                    var developer_data = resp.data.developer;
+					success({iserror: false});
+				} else {
 
+					error(resp.data.message);
+				}
 
-                    success(developer_data);
-                }
+			})
+			.catch(function (resp) {
+				error("Произошла ошибка");
 
+			});
+	}
 
-            })
-            .catch(function () {
+	static createProject(newProject, callback) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'projects/add', newProject)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
 
-            });
-    }
+					callback({iserror: false, project_id: resp.data.project_id});
+				} else {
 
-    static loadDeveloperWork(username, work_id, success) {
+					callback({iserror: true, error_message: resp.data.message});
+				}
 
+			})
+			.catch(function (resp) {
+				callback({iserror: true, error_message: "Произошла ошибка"});
 
-        axios.get(Vue.config.API_URL + 'developer/work/' + username + "/" + work_id)
-            .then(function (resp) {
+			});
+	}
 
-                if (resp.data.type == "success") {
-                    var developer_data = resp.data.developer;
-                    var work = resp.data.work;
+	static loadDeveloperReviews(username, success) {
 
 
-                    success(developer_data, work);
-                }
+		axios.get(Vue.config.API_URL + 'developer/reviews/' + username)
+			.then(function (resp) {
 
+				if (resp.data.type == "success") {
+					var developer_data = resp.data.developer;
 
-            })
-            .catch(function () {
 
-            });
-    }
+					success(developer_data);
+				}
 
-    static loadDeveloper(username) {
 
+			})
+			.catch(function () {
 
-        axios.get(Vue.config.API_URL + 'developer/' + username)
-            .then(function (resp) {
+			});
+	}
 
-                if (resp.data.type == "success") {
-                    var developer_data = resp.data.developer;
+	static loadDeveloperWork(username, work_id, success) {
 
 
-                    eventBus.$emit('load_developer_user', developer_data);
-                }
+		axios.get(Vue.config.API_URL + 'developer/work/' + username + "/" + work_id)
+			.then(function (resp) {
 
+				if (resp.data.type == "success") {
+					var developer_data = resp.data.developer;
+					var work = resp.data.work;
 
-            })
-            .catch(function () {
 
-            });
-    }
+					success(developer_data, work);
+				}
 
-    static loadUserPortfolio() {
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
-        axios.get(Vue.config.API_URL + 'portfolio/all')
-            .then(function (resp) {
+			})
+			.catch(function () {
 
+			});
+	}
 
-                eventBus.$emit('load_portfolio_user', resp.data);
+	static loadDeveloper(username) {
 
 
-            })
-            .catch(function () {
+		axios.get(Vue.config.API_URL + 'developer/' + username)
+			.then(function (resp) {
 
-            });
-    }
+				if (resp.data.type == "success") {
+					var developer_data = resp.data.developer;
+
+
+					eventBus.$emit('load_developer_user', developer_data);
+				}
+
+
+			})
+			.catch(function () {
+
+			});
+	}
+
+	static loadUserPortfolio() {
+
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'portfolio/all')
+			.then(function (resp) {
+
+
+				eventBus.$emit('load_portfolio_user', resp.data);
+
+
+			})
+			.catch(function () {
+
+			});
+	}
 
 
 }

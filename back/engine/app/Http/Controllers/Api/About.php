@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Category;
 use App\Http\Controllers\Controller;
+use App\Page;
 use App\User;
 
 class About extends Controller
@@ -22,6 +23,14 @@ class About extends Controller
 
         $portfolio = \App\Portfolio::query()->with('category', 'user')->orderByDesc("date_end")->get();
 
-        return array('type' => 'success', 'works' => $portfolio, 'teams' => $teams, 'about' => $about, 'categorys' => $categorys);
+        return array(
+            'type' => 'success',
+            'works' => $portfolio,
+            'teams' => $teams,
+            'about' => $about,
+            'categorys' => $categorys,
+        );
     }
+
+
 }

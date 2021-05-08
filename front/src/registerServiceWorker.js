@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
 import {register} from 'register-service-worker'
+import VueRegister_serviceConfig from "../vue.register_service.config";
 
 
-var base_url = "https://artemdev.ru/";
-console.log('base url');
-console.log(base_url);
+var base_url = VueRegister_serviceConfig.getBaseURL();
+
 
 if (process.env.NODE_ENV === 'production') {
 	register(`${base_url}service-worker.js`, {

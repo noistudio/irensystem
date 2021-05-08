@@ -145,7 +145,7 @@
         <div class="container pt-lg pb-300">
           <div class="row text-center justify-content-center">
             <div class="col-lg-10">
-              <h2 class="display-3 text-white">Следуй за финишом</h2>
+              <h2 class="display-3 text-white">Беги к финишу</h2>
               <p class="lead text-white">Следуйте простым шагам и вы достигните результата</p>
             </div>
           </div>

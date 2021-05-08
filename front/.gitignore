@@ -19,3 +19,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+/vue.custom.config.js
+/vue.register_service.config.js

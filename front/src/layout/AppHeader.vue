@@ -110,23 +110,33 @@
       </div>
 
       <ul class="navbar-nav navbar-nav-hover align-items-lg-center" style="">
-        <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl" style="display:none">
+
+
+        <li class="nav-item">
+          <router-link to="/" class="nav-link">О сайте</router-link>
+
+        </li>
+        <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl" v-if="is_load_pages">\
+
           <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
             <i class="ni ni-ui-04 d-lg-none"></i>
-            <span class="nav-link-inner--text">Components</span>
+            <span class="nav-link-inner--text">Страницы</span>
           </a>
           <div class="dropdown-menu-inner">
-            <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/"
-               class="media d-flex align-items-center">
+            <router-link v-for="(page,page_key) in pages" :value="page_key"
+                         :to="{name: 'page', params: { id: page.last_id }}"
+                         class="media d-flex align-items-center"
+                         tag="a">
+
               <div class="icon icon-shape bg-gradient-primary rounded-circle text-white">
-                <i class="ni ni-spaceship"></i>
+                <i v-bind:class="page.icon"></i>
               </div>
               <div class="media-body ml-3">
-                <h6 class="heading text-primary mb-md-1">Getting started</h6>
-                <p class="description d-none d-md-inline-block mb-0">Get started with Bootstrap, the
-                  world's most popular framework for building responsive sites.</p>
+                <h6 class="heading text-primary mb-md-1">{{ page.title }}</h6>
+                <p class="description d-none d-md-inline-block mb-0">{{ page.description }}.</p>
               </div>
-            </a>
+
+            </router-link>
             <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/"
                class="media d-flex align-items-center">
               <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
@@ -140,12 +150,6 @@
             </a>
           </div>
         </base-dropdown>
-
-
-        <li class="nav-item">
-          <router-link to="/" class="nav-link">О сайте</router-link>
-
-        </li>
         <li class="nav-item" v-if="islogin==true">
           <router-link to="/home" class="nav-link">Проекты</router-link>
 
@@ -405,6 +409,9 @@ export default {
     return {
       "telegram_bot": null,
       user: {},
+      is_load_pages: false,
+      pages: [],
+
       is_notify_load: false,
       new_task_developer: null,
       "loaded_categorys": false,
@@ -461,6 +468,14 @@ export default {
     })
     app.telegram_bot = Vue.config.TG_BOT;
     app.istgbot = true;
+    Api.loadPages(function (data) {
+
+      app.pages = data;
+      if (app.pages.length > 0) {
+        app.is_load_pages = true;
+      }
+
+    });
     Api.loadCategorys(function (data) {
       app.categorys = data;
       app.loaded_categorys = true;
