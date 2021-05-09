@@ -430,19 +430,23 @@ class Posts extends Controller
         }
         $short = array();
         $short = $form['json'];
-        $short['json']['blocks'] = array();
+        $short['blocks'] = array();
+
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']
             ) > 0) {
             foreach ($form['json']['blocks'] as $block) {
+
                 if (isset($block['type']) and $block['type'] == "delimiter") {
+
                     break;
                 }
-                $short['json']['blocks'][] = $block;
+                $short['blocks'][] = $block;
 
 
             }
         }
+
 
         $content = $form['json'];
 
