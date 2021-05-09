@@ -27,6 +27,8 @@ Route::post('login', 'UserController@login')->name('login');
 Route::any('about', 'About@index');
 Route::get('pages', 'Pages@all');
 Route::get('page/{id}', 'Pages@show');
+Route::get('blog/all/{limit}/{offset}', 'Posts@all');
+Route::get('blog/post/{id}', 'Posts@show_post');
 Route::any('categorys/all', 'Categorys@all')->name('categorys_all');
 Route::get("editor/fetchUrl", "Editor@fetchUrl");
 Route::get('developer/{username}', 'Developer@get');
@@ -35,6 +37,13 @@ Route::get('developer/work/{username}/{work_id}', 'Developer@getWork');
 Route::middleware(['auth:api'])->group(
     function () {
 
+        Route::get("blog/delcomment/{comment_id}/{post_id}", "Posts@delete_comment");
+        Route::get("blog/delsubcomment/{subcomment_id}/{comment_id}/{post_id}", "Posts@delete_sub_comment");
+        Route::any('blog/categorys', 'Posts@categorys')->name('blog.categorys');
+        Route::post('blog/addpost', 'Posts@addPost');
+        Route::post("blog/comments/sendsub/{post_id}/{comment_id}", "Posts@sendSubComment");
+        Route::post("blog/commentadd/{last_id}", "Posts@addComment");
+        Route::get('blog/enable/{last_id}', 'Posts@setEnable');
         Route::get("portfolio/categorys", "Portfolio@categorys");
         Route::get("portfolio/all", "Portfolio@all");
         Route::get('portfolio/delete/{id}', 'Portfolio@delete');

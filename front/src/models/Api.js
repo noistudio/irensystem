@@ -4,6 +4,85 @@ import {eventBus, vm} from "@/main";
 
 export default class Api {
 
+	static loadPosts(limit, offset, success) {
+		var api_token = localStorage.getItem('api_token');
+		if (api_token) {
+
+			axios.defaults.headers.common['Authorization'] = `Bearer ` + api_token;
+
+		}
+		axios.get(Vue.config.API_URL + 'blog/all/' + limit + '/' + offset)
+			.then(function (resp) {
+
+
+				success(resp.data);
+
+
+			})
+			.catch(function () {
+
+			});
+	}
+
+	static deleteCommentPost(comment_id, post_id, success) {
+		axios.get(Vue.config.API_URL + 'blog/delcomment/' + comment_id + '/' + post_id)
+			.then(function (resp) {
+
+
+				if (resp.data.type == "success") {
+					success(resp.data);
+				}
+
+
+			})
+			.catch(function () {
+
+			});
+	}
+
+	static deleteSubCommentPost(subcomment_id, comment_id, post_id, success) {
+
+		axios.get(Vue.config.API_URL + 'blog/delsubcomment/' + subcomment_id + '/' + comment_id + '/' + post_id)
+			.then(function (resp) {
+
+
+				if (resp.data.type == "success") {
+					success(resp.data);
+				}
+
+
+			})
+			.catch(function () {
+
+			});
+	}
+
+	static loadPost(id, success) {
+
+		(async (id, success) => {
+			var api_token = await localStorage.getItem('api_token');
+			if (api_token) {
+
+				axios.defaults.headers.common['Authorization'] = `Bearer ` + api_token;
+
+			}
+			axios.get(Vue.config.API_URL + 'blog/post/' + id)
+				.then(function (resp) {
+
+					if (resp.data.type && resp.data.type == "success") {
+						success(resp.data.post);
+					}
+
+
+				})
+				.catch(function () {
+
+				});
+
+		})(id, success);
+
+	}
+
 	static loadPage(id, success) {
 		axios.get(Vue.config.API_URL + 'page/' + id)
 			.then(function (resp) {
@@ -228,6 +307,20 @@ export default class Api {
 			});
 	}
 
+	static loadBlogCategorys(callback) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'blog/categorys')
+			.then(function (resp) {
+
+
+				callback(resp.data);
+
+
+			})
+			.catch(function () {
+
+			});
+	}
 
 	static loadCategorys(callback) {
 
@@ -394,6 +487,21 @@ export default class Api {
 			});
 	}
 
+	static sendPostSubComment(post_id, comment_id, comment, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'blog/comments/sendsub/' + post_id + "/" + comment_id, {"comment": comment})
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.comments)
+				}
+
+			})
+			.catch(function (resp) {
+
+			});
+	}
+
 	static sendSubComment(project_id, comment_id, comment, success) {
 		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
 		axios.post(Vue.config.API_URL + 'comments/sendsub/' + project_id + "/" + comment_id, {"comment": comment})
@@ -431,6 +539,25 @@ export default class Api {
 				//alert('Успешно!');
 				if (resp.data.type == "success") {
 					success(resp.data.offer)
+				} else {
+					error(resp.data.message);
+				}
+
+			})
+			.catch(function (resp) {
+
+				error("Произошла ошибка!");
+			});
+	}
+
+
+	static addPostComment(newComment, post_id, success, error) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'blog/commentadd/' + post_id, newComment)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+					success(resp.data.comment)
 				} else {
 					error(resp.data.message);
 				}
@@ -678,6 +805,43 @@ export default class Api {
 			})
 			.catch(function (resp) {
 				error("Произошла ошибка");
+
+			});
+	}
+
+	static changeEnablePost(post_id, success) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'blog/enable/' + post_id)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+
+					success(resp.data.post);
+				}
+
+			})
+			.catch(function (resp) {
+
+
+			});
+	}
+
+	static createPost(newPost, callback) {
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.post(Vue.config.API_URL + 'blog/addpost', newPost)
+			.then(function (resp) {
+				//alert('Успешно!');
+				if (resp.data.type == "success") {
+
+					callback({iserror: false, post_id: resp.data.post_id});
+				} else {
+
+					callback({iserror: true, error_message: resp.data.message});
+				}
+
+			})
+			.catch(function (resp) {
+				callback({iserror: true, error_message: "Произошла ошибка"});
 
 			});
 	}

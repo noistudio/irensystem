@@ -74,6 +74,18 @@ export default {
     var app = this;
     let id = app.$route.params.id;
 
+    eventBus.$on('user_is_login', user => {
+      this.islogin = false;
+      if (typeof user === 'object') {
+        if (user.api_token) {
+          app.user = user;
+          app.islogin = true;
+
+        }
+      }
+
+
+    });
 
     Api.loadPage(id, function (data) {
       app.page_data = data;

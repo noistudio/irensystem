@@ -26,6 +26,8 @@
               </div>
             </div>
           </div>
+
+
         </section>
         <!-- 1st Hero Variation -->
       </div>
@@ -120,6 +122,7 @@
                     <span class="d-block mb-1">{{ team.name }}</span>
                     <router-link :to="{name: 'developer', params: { username: team.username }}" class="dropdown-item">
                       <small class="h6 text-muted">@{{ team.username }}</small></router-link>
+                    <small class="h6 text-muted">{{ team.job }}</small>
                   </h5>
                   <div class="mt-3">
                     <base-button tag="a" :href="'https://t.me/'+team.username" target="_blank" type="warning"
@@ -134,7 +137,70 @@
           </div>
         </div>
       </section>
+      <section class="section section section-shaped my-0 overflow-hidden" v-if="posts && posts.length>0">
+        <div class="shape shape-style-1 bg-gradient-warning ">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
 
+        </div>
+        <div class="container py-0">
+          <div class="row row-grid mb-5 align-items-center">
+            <div class="d-flex px-3">
+              <div>
+                <icon name="ni ni-caps-small" size="lg" class="bg-gradient-white" color="primary" shadow
+                      rounded></icon>
+              </div>
+              <div class="pl-4">
+                <h4 class="display-3 text-white">Посты</h4>
+                <p class="text-white">Последние записи из избранных категорий</p>
+              </div>
+            </div>
+
+            <div class="row col-md-12 mt-3">
+              <div class="col-md-4  "
+                   v-for="post in posts"
+                   :key="post.last_id">
+                <div class="row alert alert-secondary ml-1 mb-2 col-md-12">
+                  <div class="row col-md-12">
+                    <img class="" style="width:30px;"
+                         :src="image_url+post.category_post.image"/>
+                    <span class="post_blog_category">{{ post.category_post.title }}</span>
+
+                  </div>
+                  <div class="row col-md-12">
+                    <editorjsrender :blocks_json="post.short.blocks"></editorjsrender>
+                  </div>
+
+                  <div class="row col-md-12">
+
+                    <p><i class="fa fa-calendar-times-o"></i> {{ post.created_at }}
+                      <router-link class=" " :to="{name: 'post', params: { id: post.last_id }}"
+                      ><i class="fa fa-link"></i>
+                      </router-link>
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
+            <div class="row col-md-12 mt-3">
+              <div class="row ">
+                <router-link style="margin-left:2.5rem;" to="/posts" class="btn btn-success" tag="a">Посмотреть все
+                  посты
+                </router-link>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
       <section class="section section-shaped my-0 overflow-hidden">
         <div class="shape shape-style-3 bg-gradient-default shape-skew">
           <span></span>
@@ -221,6 +287,7 @@ import Modal from "@/components/Modal";
 import Loading from 'vue-loading-overlay';
 
 import 'vue-loading-overlay/dist/vue-loading.css';
+import Editorjsrender from "@/models/Editorjsrender";
 
 var Avatar = require('vue-avatar');
 
@@ -228,7 +295,7 @@ var Avatar = require('vue-avatar');
 export default {
   name: 'home',
 
-  components: {Loading, Carousel, Modal, vueTelegramLogin, 'avatar': Avatar.Avatar},
+  components: {Loading, Carousel, Modal, vueTelegramLogin, 'avatar': Avatar.Avatar, 'editorjsrender': Editorjsrender,},
   data() {
     return {
 
@@ -242,6 +309,7 @@ export default {
       sliding: null,
       "is_load": false,
       "about": null,
+      "posts": null,
       "categorys": null,
       "image_url": null,
       "teams": null,
@@ -291,6 +359,7 @@ export default {
     console.log(this);
     Api.loadAbout(function (data) {
       app.about = data.about;
+      app.posts = data.posts;
       app.categorys = data.categorys;
 
       app.image_url = Vue.config.IMAGE_URL;

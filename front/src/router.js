@@ -2,7 +2,8 @@ import Vue from "vue";
 import Router from "vue-router";
 import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
-
+import BlogPosts from "@/views/blog/Posts";
+import BlogPost from "@/views/blog/Post";
 import Components from "./views/Components.vue";
 import Landing from "./views/Landing.vue";
 import Login from "./views/Login.vue";
@@ -29,7 +30,7 @@ const guard = function (to, from, next) {
 	// check for valid auth token
 
 
-	Api.login(to, next);
+	  Api.login(to, next);
 
 
 };
@@ -47,7 +48,26 @@ export default new Router({
 				footer: AppFooter
 			}
 		},
+		{
+			path: "/posts",
+			name: "posts",
+			components: {
+				header: AppHeader,
+				default: BlogPosts,
+				footer: AppFooter
+			}
+		},
+		{
+			path: "/post/:id/:rand?",
+			name: "post",
+			components: {
+				header: AppHeader,
+				default: BlogPost,
+				footer: AppFooter
 
+			}
+
+		},
 
 		{
 			path: "/home/:rand?",

@@ -22,8 +22,14 @@
           <label for="exampleCategory">Тип </label>
           <select id="exampleCategory" v-if="loaded_categorys==true" v-model="form.category" required
                   class="form-control">
-            <option v-for="category in categorys" :value="category.last_id" :key="category.last_id">{{
+            <option v-if="categorys[0].name" v-for="category in categorys" :value="category.last_id"
+                    :key="category.last_id">{{
                 category.name
+              }}
+            </option>
+            <option v-if="categorys[0].title" v-for="category in categorys" :value="category.last_id"
+                    :key="category.last_id">{{
+                category.title
               }}
             </option>
 
@@ -137,17 +143,7 @@
               </div>
 
             </router-link>
-            <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/"
-               class="media d-flex align-items-center">
-              <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
-                <i class="ni ni-ui-04"></i>
-              </div>
-              <div class="media-body ml-3">
-                <h5 class="heading text-warning mb-md-1">Components</h5>
-                <p class="description d-none d-md-inline-block mb-0">Learn how to use Argon
-                  compiling Scss, change brand colors and more.</p>
-              </div>
-            </a>
+
           </div>
         </base-dropdown>
         <li class="nav-item" v-if="islogin==true">
@@ -452,6 +448,18 @@ export default {
 
     eventBus.$on("call_modal_add_project", data => {
       app.modal_params = data;
+      app.loaded_categorys = false;
+      if (app.modal_params.type && (app.modal_params.type == "post_new" || app.modal_params.type == "post_edit")) {
+        Api.loadBlogCategorys(function (data) {
+          app.categorys = data;
+          app.loaded_categorys = true;
+        });
+      } else {
+        Api.loadCategorys(function (data) {
+          app.categorys = data;
+          app.loaded_categorys = true;
+        });
+      }
 
       if (app.modal_params.type && app.modal_params.type == "edit") {
         app.editProject();
@@ -461,6 +469,10 @@ export default {
         app.editWork();
       } else if (app.modal_params.type && app.modal_params.type == "addtask") {
         app.addTask();
+      } else if (app.modal_params.type && app.modal_params.type == "post_new") {
+        app.addPost();
+      } else if (app.modal_params.type && app.modal_params.type == "post_edit") {
+        app.editPost();
       } else {
         app.addProject();
       }
@@ -648,6 +660,25 @@ export default {
       this.modal_btn_add_project = "Сохранить изменения";
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
+    addPost() {
+      this.is_add_task = false;
+      this.is_show_category = true;
+      this.form.category = null;
+      this.modals.add_project = true;
+      this.modal_add_title = this.modal_params.modal_title;
+      this.modal_btn_add_project = "Добавить пост";
+      this.$refs.editor._data.state.editor.render(this.modal_params.json);
+    },
+    editPost() {
+      this.is_add_task = false;
+      this.is_show_category = true;
+      this.form.category = null;
+      this.modals.add_project = true;
+      this.modal_add_title = this.modal_params.modal_title;
+      this.modal_btn_add_project = "Редактировать пост";
+      this.form.category = this.modal_params.category;
+      this.$refs.editor._data.state.editor.render(this.modal_params.json);
+    },
     addWork() {
       this.is_add_task = false;
       this.is_show_category = false;
@@ -742,7 +773,71 @@ export default {
     },
     invokeSave() {
       var app = this;
-      if (app.modal_params.type && app.modal_params.type == "edit") {
+      if (app.modal_params.type && app.modal_params.type == "post_new") {
+        {
+          this.$refs.editor._data.state.editor.save()
+              .then((data) => {
+                // Do what you want with the data here
+
+                var app = this;
+                var newPost = app.form;
+                newPost.json = data;
+                Api.createPost(newPost, function (result) {
+                  if (result.iserror == false) {
+                    app.iserror = false;
+                    app.modals.add_project = false;
+                    app.form = {};
+                    app.$refs.editor._data.state.editor.clear();
+                    //  app.is_load_projects = false;
+                    document.location.hash = "#/post/" + result.post_id;
+                    app.$router.push({name: 'post', params: {id: result.post_id, "rand": Math.random()}});
+                  } else {
+                    app.iserror = true;
+                    app.error_message = result.error_message;
+                  }
+                });
+
+
+                console.log(data)
+              })
+              .catch(err => {
+                console.log(err)
+              })
+        }
+      } else if (app.modal_params.type && app.modal_params.type == "post_edit") {
+        {
+          this.$refs.editor._data.state.editor.save()
+              .then((data) => {
+                // Do what you want with the data here
+
+                var app = this;
+                var newPost = app.form;
+                newPost.json = data;
+                newPost.last_id = app.modal_params.post_id;
+                Api.createPost(newPost, function (result) {
+                  if (result.iserror == false) {
+                    app.iserror = false;
+                    app.modals.add_project = false;
+                    app.form = {};
+                    app.$refs.editor._data.state.editor.clear();
+                    //  app.is_load_projects = false;
+                    document.location.hash = "#/post/" + result.post_id;
+
+                    app.$router.push({name: 'post', params: {id: result.post_id, "rand": Math.random()}});
+                  } else {
+                    app.iserror = true;
+                    app.error_message = result.error_message;
+                  }
+                });
+
+
+                console.log(data)
+              })
+              .catch(err => {
+                console.log(err)
+              })
+        }
+      } else if (app.modal_params.type && app.modal_params.type == "edit") {
 
 
         this.$refs.editor._data.state.editor.save()
