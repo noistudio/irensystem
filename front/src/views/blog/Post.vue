@@ -86,7 +86,7 @@
             </div>
 
             <div class="row m-3">
-              <sui-comment-group size="massive" threaded>
+              <sui-comment-group v-if="post_data.disable_comments==0" size="massive" threaded>
                 <h3 is="sui-header" dividing>Комментарии</h3>
 
                 <sui-comment v-if="post_data.comments.length>0" v-for="(comment,comment_index) in post_data.comments"
