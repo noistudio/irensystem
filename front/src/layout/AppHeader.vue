@@ -454,6 +454,13 @@ export default {
           app.categorys = data;
           app.loaded_categorys = true;
         });
+      } else if (app.modal_params.type && (app.modal_params.type == "addwork" || app.modal_params.type == "editwork")) {
+        Api.loadPortfolioCategorysModal(function (data) {
+              app.is_show_category = false;
+              app.categorys = data;
+              app.loaded_categorys = true;
+            }
+        );
       } else {
         Api.loadCategorys(function (data) {
           app.categorys = data;
@@ -653,7 +660,7 @@ export default {
     },
     editWork() {
       this.is_add_task = false;
-      this.is_show_category = false;
+      this.is_show_category = true;
       this.form.category = null;
       this.modals.add_project = true;
       this.modal_add_title = this.modal_params.modal_title;
@@ -681,7 +688,7 @@ export default {
     },
     addWork() {
       this.is_add_task = false;
-      this.is_show_category = false;
+      this.is_show_category = true;
       this.form.category = null;
       this.modals.add_project = true;
       this.modal_add_title = this.modal_params.modal_title;

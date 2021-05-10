@@ -354,6 +354,22 @@ export default class Api {
 			});
 	}
 
+	static loadPortfolioCategorysModal(success) {
+
+		axios.defaults.headers.common['Authorization'] = `Bearer ` + vm.$store.getters.TOKEN;
+		axios.get(Vue.config.API_URL + 'portfolio/categorys')
+			.then(function (resp) {
+
+
+				success(resp.data);
+
+
+			})
+			.catch(function () {
+
+			});
+	}
+
 	static loadInvoice(id) {
 
 
