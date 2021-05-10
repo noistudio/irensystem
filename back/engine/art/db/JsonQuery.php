@@ -8,13 +8,16 @@ use yii\base\ErrorException;
 use Exception;
 use Illuminate\Http\Request;
 
-class JsonQuery {
+class JsonQuery
+{
 
-    static function delete($id, $field, $table) {
+    static function delete($id, $field, $table)
+    {
         Lazer::table($table)->where($field, '=', $id)->find()->delete();
     }
 
-    static function get($id, $table, $field = "id", $findjson = false) {
+    static function get($id, $table, $field = "id", $findjson = false)
+    {
         try {
 
 
@@ -27,14 +30,10 @@ class JsonQuery {
             }
 
 
-
-
-
-
             if (isset($row->id)) {
                 if ($findjson) {
 
-                    $class_to_array = (array) $row;
+                    $class_to_array = (array)$row;
                     $datas = null;
                     foreach ($class_to_array as $key => $val) {
                         $tmp = str_replace("set", "", $key);
@@ -60,8 +59,10 @@ class JsonQuery {
                             }
                         }
                     }
+
                     return $object;
                 }
+
                 return $row;
             } else {
                 return null;
@@ -72,7 +73,12 @@ class JsonQuery {
         }
     }
 
-    static function all($table, $order_field = 'id', $order_type = "ASC") {
+    static function all($table, $order_field = 'id', $order_type = "ASC")
+    {
+        $files = scandir(LAZER_DATA_PATH);
+        if (count($files) == 2) {
+            return array();
+        }
 
         $rows = Lazer::table($table)->orderBy($order_field, $order_type)->findAll();
 
@@ -80,12 +86,15 @@ class JsonQuery {
         return $rows;
     }
 
-    static function insert($table) {
+    static function insert($table)
+    {
         $row = Lazer::table($table);
+
         return $row;
     }
 
-    static function save($array, $table, $row = null) {
+    static function save($array, $table, $row = null)
+    {
         if ($row == null) {
             $row = JsonQuery::insert($table);
         }
@@ -97,6 +106,7 @@ class JsonQuery {
         }
 
         $row->save();
+
         return $row;
     }
 
