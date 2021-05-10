@@ -7,6 +7,9 @@ class LogsConfig {
     static function get() {
 
         $path_to_logs = realpath(__DIR__ . "/../../../db_json/logs.data.json");
+        if(!file_exists($path_to_logs)){
+           return array();
+        }
 
         $rows = json_decode(file_get_contents($path_to_logs), true);
 

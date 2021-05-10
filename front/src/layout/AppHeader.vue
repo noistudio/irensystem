@@ -96,7 +96,7 @@
         <router-link class="navbar-brand" to="/">
           Artemdev
         </router-link>
-        <base-button class="btn btn-warning" type="warning" @click="addProject">
+        <base-button class="btn btn-warning" type="warning" @click="addProject(true)">
           Разместить проект
         </base-button>
       </div>
@@ -160,7 +160,7 @@
       <ul class="navbar-nav align-items-lg-center ml-lg-auto">
 
         <li class="nav-item" v-if="islogin==false">
-          <base-button class="btn btn-success" type="success" @click="addProject">
+          <base-button class="btn btn-success" type="success" @click="addProject(false)">
             Войти\Зарегистрироваться
           </base-button>
         </li>
@@ -441,6 +441,7 @@ export default {
       islogin: false,
       'istgbot': false,
       'timer': '',
+      show_modal_after_login: true,
     }
   },
   mounted: function () {
@@ -659,6 +660,7 @@ export default {
       });
     },
     editWork() {
+      this.show_modal_after_login = true;
       this.is_add_task = false;
       this.is_show_category = true;
       this.form.category = null;
@@ -668,6 +670,7 @@ export default {
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
     addPost() {
+      this.show_modal_after_login = true
       this.is_add_task = false;
       this.is_show_category = true;
       this.form.category = null;
@@ -677,6 +680,7 @@ export default {
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
     editPost() {
+      this.show_modal_after_login = true;
       this.is_add_task = false;
       this.is_show_category = true;
       this.form.category = null;
@@ -687,6 +691,7 @@ export default {
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
     addWork() {
+      this.show_modal_after_login = true;
       this.is_add_task = false;
       this.is_show_category = true;
       this.form.category = null;
@@ -696,6 +701,7 @@ export default {
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
     addTask() {
+      this.show_modal_after_login = true;
       this.is_add_task = true;
       this.is_show_category = false;
       this.form.category = null;
@@ -705,6 +711,7 @@ export default {
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
     editProject() {
+      this.show_modal_after_login = true;
       this.is_add_task = false;
       this.is_show_category = false;
       this.form.category = null;
@@ -713,9 +720,15 @@ export default {
       this.modal_btn_add_project = "Сохранить изменения!";
       this.$refs.editor._data.state.editor.render(this.modal_params.json);
     },
-    addProject() {
-
-
+    addProject(show_modal_after_login = true) {
+      console.log('status login');
+      console.log(this.islogin);
+      if (this.islogin) {
+        this.modal_add_title = "Размещение проекта";
+      } else {
+        this.modal_add_title = "Авторизация в системе";
+      }
+      this.show_modal_after_login = show_modal_after_login;
       this.is_add_task = false;
       this.modal_params = {};
       this.is_show_category = true;
@@ -723,7 +736,7 @@ export default {
       this.modals.add_project = true;
       this.$refs.editor._data.state.editor.render(this.config.data);
       this.modal_btn_add_project = "Отправить на оценку";
-      this.modal_add_title = "Размещение проекта";
+
     },
     loadNotify() {
       var app = this;
@@ -998,7 +1011,12 @@ export default {
               app.$store.commit('SET_TOKEN', response.data.user.api_token);
 
               eventBus.$emit('reload', response.data.user);
-              app.modals.add_project = true;
+              this.modal_add_title = "Размещение проекта";
+              if (app.show_modal_after_login == true) {
+                app.modals.add_project = true;
+              } else {
+                app.modals.add_project = false;
+              }
             } else {
               alert(response.data.message);
             }
