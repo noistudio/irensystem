@@ -122,7 +122,7 @@
           <router-link to="/" class="nav-link">О сайте</router-link>
 
         </li>
-        <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl" v-if="is_load_pages">\
+        <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl" v-if="is_load_pages && pages.length>0">\
 
           <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
             <i class="ni ni-ui-04 d-lg-none"></i>

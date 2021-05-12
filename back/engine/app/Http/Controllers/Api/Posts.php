@@ -407,23 +407,32 @@ class Posts extends Controller
 
 
         $category = null;
-        if (isset($form['category']) and is_integer($form['category'])) {
+        if (isset($form['category']) and is_numeric($form['category'])) {
             $category = BlogCategory::query()->with("my_access")->where("enable", 1)->where(
                 "last_id",
                 $form['category']
             )->first();
 
-            if (!(isset($category->my_access) and (isset($category->my_access->write) and $category->my_access->write == 1) or (isset($category->my_access->isadmin) and $category->my_access->isadmin == 1))) {
-                return array(
-                    'type' => 'error',
-                    'message' => 'У вас нет доступа для публикации в категорию '.$category->title,
-                );
+            if (!$category) {
+                return array('type' => 'error', 'message' => 'Вы не указали Категорию');
+            }
+
+            if (!($category->ispublic == 1)) {
+
+                if (!(isset($category->my_access) and (isset($category->my_access->write) and $category->my_access->write == 1) or (isset($category->my_access->isadmin) and $category->my_access->isadmin == 1))) {
+                    return array(
+                        'type' => 'error',
+                        'message' => 'У вас нет доступа для публикации в категорию '.$category->title,
+                    );
+                }
             }
 
         }
+
         if (!isset($category)) {
             return array('type' => 'error', 'message' => 'Вы не указали Категорию');
         }
+
 
         if (!(isset($form['json']['blocks']) and count($form['json']['blocks']) > 0)) {
             return array('type' => 'error', 'message' => 'Вы не ввели текст поста');

@@ -33,71 +33,94 @@ class Projects extends Controller
 
         $develops_category = array();
         if ($me->isdeveloper == 1) {
-            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('last_id')->toArray();
+            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck(
+                'category_id'
+            )->toArray();
 
         }
 
 
         $user_id = request()->user()->last_id;
-        $result['freelance'] = Project::query()->where(function ($query) use ($me, $develops_category) {
+        $result['freelance'] = Project::query()->where(
+            function ($query) use ($me, $develops_category) {
 
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                if ($me->isdeveloper == 1) {
-                    $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        if ($me->isdeveloper == 1) {
+                            $sub_query->orWhere("developer_id", $me->last_id);
+                        }
+                        $sub_query->orHas("spectator");
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
                 }
-                $sub_query->orHas("spectator");
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+
+
             }
+        )->where("developer_id", 0)->count();
 
+        $result['inwork'] = Project::query()->where(
+            function ($query) use ($me, $develops_category) {
 
-        })->where("developer_id", 0)->count();
-
-        $result['inwork'] = Project::query()->where(function ($query) use ($me, $develops_category) {
-
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                if ($me->isdeveloper == 1) {
-                    $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        if ($me->isdeveloper == 1) {
+                            $sub_query->orWhere("developer_id", $me->last_id);
+                        }
+                        $sub_query->orHas("spectator");
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
                 }
-                $sub_query->orHas("spectator");
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+
+
             }
+        )->where("developer_id", ">", 0)->where('main_project_id', 0)->count();
 
 
-        })->where("developer_id", ">", 0)->where('main_project_id', 0)->count();
+        $result['finish'] = Project::query()->where(
+            function ($query) use ($me, $develops_category) {
 
-
-        $result['finish'] = Project::query()->where(function ($query) use ($me, $develops_category) {
-
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                if ($me->isdeveloper == 1) {
-                    $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        if ($me->isdeveloper == 1) {
+                            $sub_query->orWhere("developer_id", $me->last_id);
+                        }
+                        $sub_query->orHas("spectator");
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
                 }
-                $sub_query->orHas("spectator");
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+
+
             }
-
-
-        })->where("developer_id", ">", 0)->where('main_project_id', 0)->whereHas('status_row', function ($query) {
-            $query->where('isfinish', '1');
-        })->count();
+        )->where("developer_id", ">", 0)->where('main_project_id', 0)->whereHas(
+            'status_row',
+            function ($query) {
+                $query->where('isfinish', '1');
+            }
+        )->count();
 
         return $result;
 
@@ -111,36 +134,46 @@ class Projects extends Controller
 
         $develops_category = array();
         if ($me->isdeveloper == 1) {
-            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('last_id')->toArray();
+            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck(
+                'category_id'
+            )->toArray();
 
         }
 
 
         $user_id = request()->user()->last_id;
-        $projects = Project::query()->with('status_row')->where(function ($query) use ($me, $develops_category) {
+        $projects = Project::query()->with('status_row')->where(
+            function ($query) use ($me, $develops_category) {
 
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                if ($me->isdeveloper == 1) {
-                    $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        if ($me->isdeveloper == 1) {
+                            $sub_query->orWhere("developer_id", $me->last_id);
+                        }
+                        $sub_query->orHas("spectator");
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
                 }
-                $sub_query->orHas("spectator");
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+
+
             }
+        )->where("main_project_id", 0)->orderByDesc("created_at")->orderByDesc("updated_at")->get();
 
-
-        })->where("main_project_id", 0)->orderByDesc("created_at")->orderByDesc("updated_at")->get();
-
-        $statuses = Status::query()->where(function ($query) {
-            $query->orWhere("issearch", 1);
-            $query->orWhere("iswork", 1);
-            $query->orWhere("isfinish", 1);
-        })->get();
+        $statuses = Status::query()->where(
+            function ($query) {
+                $query->orWhere("issearch", 1);
+                $query->orWhere("iswork", 1);
+                $query->orWhere("isfinish", 1);
+            }
+        )->get();
 
 
         return array('type' => 'success', 'statuses' => $statuses, 'projects' => $projects);
@@ -150,21 +183,28 @@ class Projects extends Controller
     {
         $user_id = request()->user()->last_id;
         $me = request()->user();
-        $project = Project::query()->where(function ($query) use ($me) {
+        $project = Project::query()->where(
+            function ($query) use ($me) {
 
-            $query->orWhere(function ($sub_query) use ($me) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        $sub_query->orWhere("developer_id", $me->last_id);
 
-                $sub_query->orHas("spectator");
-            });
+                        $sub_query->orHas("spectator");
+                    }
+                );
 
 
-        })->where("last_id", $project_id)->first();
+            }
+        )->where("last_id", $project_id)->first();
         if (!($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден, либо вы не являетесь клиентом!');
         }
-        $project_invoice = ProjectInvoice::query()->where('client_id', $me->last_id)->where("project_id", $project->last_id)->where("last_id", $id)->where("is_finish", 0)->where("is_approve_client", 1)->first();
+        $project_invoice = ProjectInvoice::query()->where('client_id', $me->last_id)->where(
+            "project_id",
+            $project->last_id
+        )->where("last_id", $id)->where("is_finish", 0)->where("is_approve_client", 1)->first();
         if (!$project_invoice) {
             return array('type' => 'error', 'message' => 'Счет не найден!');
         }
@@ -191,17 +231,21 @@ class Projects extends Controller
     {
         $user_id = request()->user()->last_id;
         $me = request()->user();
-        $project = Project::query()->where(function ($query) use ($me) {
+        $project = Project::query()->where(
+            function ($query) use ($me) {
 
-            $query->orWhere(function ($sub_query) use ($me) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        $sub_query->orWhere("developer_id", $me->last_id);
 
 
-            });
+                    }
+                );
 
 
-        })->where("developer_id", ">", 0)->where("last_id", $project_id)->first();
+            }
+        )->where("developer_id", ">", 0)->where("last_id", $project_id)->first();
         if (!$project) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
 
@@ -209,11 +253,13 @@ class Projects extends Controller
         }
         $status = null;
         if (isset($status_id) and is_numeric($status_id)) {
-            $status = Status::query()->where(function ($query) use ($project, $me) {
-                $query->orWhere("iswork", 1);
-                $query->orWhere("isfinish", 1);
+            $status = Status::query()->where(
+                function ($query) use ($project, $me) {
+                    $query->orWhere("iswork", 1);
+                    $query->orWhere("isfinish", 1);
 
-            })->where("last_id", $status_id)->first();
+                }
+            )->where("last_id", $status_id)->first();
         }
         if (!$status) {
             return array('type' => 'error', 'message' => 'Статус не найден!');
@@ -235,21 +281,28 @@ class Projects extends Controller
 
         $user_id = request()->user()->last_id;
         $me = request()->user();
-        $project = Project::query()->where(function ($query) use ($me) {
+        $project = Project::query()->where(
+            function ($query) use ($me) {
 
-            $query->orWhere(function ($sub_query) use ($me) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        $sub_query->orWhere("developer_id", $me->last_id);
 
-                $sub_query->orHas("spectator");
-            });
+                        $sub_query->orHas("spectator");
+                    }
+                );
 
 
-        })->where("last_id", $project_id)->first();
+            }
+        )->where("last_id", $project_id)->first();
         if (!($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден, либо вы не являетесь клиентом!');
         }
-        $project_invoice = ProjectInvoice::query()->where('client_id', $me->last_id)->where("project_id", $project->last_id)->where("last_id", $id)->where("is_approve_client", 0)->first();
+        $project_invoice = ProjectInvoice::query()->where('client_id', $me->last_id)->where(
+            "project_id",
+            $project->last_id
+        )->where("last_id", $id)->where("is_approve_client", 0)->first();
         if (!$project_invoice) {
             return array('type' => 'error', 'message' => 'Счет не найден!');
         }
@@ -266,21 +319,45 @@ class Projects extends Controller
 
         $user_id = request()->user()->last_id;
         $me = request()->user();
-        $project = Project::query()->with("main_project", "client", "tasks", "tasks.status_row", "tasks.client", "invoices", "invoices.final", "comments", "comments.comments", "comments.comments.user", "comments.user", "status_row", "offers", "offers.comments", "offers.comments.user", "offers.developer")->where(function ($query) use ($me) {
+        $project = Project::query()->with(
+            "main_project",
+            "client",
+            "tasks",
+            "tasks.status_row",
+            "tasks.client",
+            "invoices",
+            "invoices.final",
+            "comments",
+            "comments.comments",
+            "comments.comments.user",
+            "comments.user",
+            "status_row",
+            "offers",
+            "offers.comments",
+            "offers.comments.user",
+            "offers.developer"
+        )->where(
+            function ($query) use ($me) {
 
-            $query->orWhere(function ($sub_query) use ($me) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        $sub_query->orWhere("developer_id", $me->last_id);
 
-                $sub_query->orHas("spectator");
-            });
+                        $sub_query->orHas("spectator");
+                    }
+                );
 
 
-        })->where("last_id", $project_id)->first();
+            }
+        )->where("last_id", $project_id)->first();
         if (!($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден, либо вы не являетесь разработчиком!');
         }
-        $project_invoice = ProjectInvoice::query()->where("developer_id", $me->last_id)->where("project_id", $project->last_id)->where("last_id", $id)->where("is_approve_client", 0)->first();
+        $project_invoice = ProjectInvoice::query()->where("developer_id", $me->last_id)->where(
+            "project_id",
+            $project->last_id
+        )->where("last_id", $id)->where("is_approve_client", 0)->first();
         if (!$project_invoice) {
             return array('type' => 'error', 'message' => 'Счет не найден!');
         }
@@ -292,16 +369,20 @@ class Projects extends Controller
     public function addInvoice($id)
     {
         $user_id = request()->user()->last_id;
-        $project = Project::query()->where("last_id", $id)->where(function ($query) use ($user_id) {
+        $project = Project::query()->where("last_id", $id)->where(
+            function ($query) use ($user_id) {
 
-            $query->where("developer_id", $user_id);
-        })->first();
+                $query->where("developer_id", $user_id);
+            }
+        )->first();
         if (!($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден, либо вы не являетесь разработчиком!');
         }
         $new_invoice = request()->post();
         $user_invoice = null;
-        if (isset($new_invoice['user_id']) and is_numeric($new_invoice['user_id']) and $new_invoice['user_id'] != $user_id) {
+        if (isset($new_invoice['user_id']) and is_numeric(
+                $new_invoice['user_id']
+            ) and $new_invoice['user_id'] != $user_id) {
             $user_invoice = User::query()->where('last_id', $new_invoice['user_id'])->first();
         }
 
@@ -316,7 +397,7 @@ class Projects extends Controller
 
         if ($new_invoice['type'] == "developer") {
             $users = $project->getUsers();
-            if (!(isset($users['last_id_' . $user_invoice->last_id]) and $users['last_id_' . $user_invoice->last_id]->role == "spectator")) {
+            if (!(isset($users['last_id_'.$user_invoice->last_id]) and $users['last_id_'.$user_invoice->last_id]->role == "spectator")) {
                 return array('type' => 'error', 'message' => 'Разработчиком может выступать только наблюдатель!');
             }
         }
@@ -326,16 +407,21 @@ class Projects extends Controller
             return array('type' => 'error', 'message' => 'Вы не указали сумму');
         }
 
-        if (!(isset($new_invoice['currency']) and is_string($new_invoice['currency']) and strlen($new_invoice['currency'])) > 0) {
+        if (!(isset($new_invoice['currency']) and is_string($new_invoice['currency']) and strlen(
+                    $new_invoice['currency']
+                )) > 0) {
             return array('type' => 'error', 'message' => 'Вы не указали валюту');
         }
 
-        if (!(isset($new_invoice['title']) and is_string($new_invoice['title']) and strlen($new_invoice['title']) > 0)) {
+        if (!(isset($new_invoice['title']) and is_string($new_invoice['title']) and strlen(
+                $new_invoice['title']
+            ) > 0)) {
             return array('type' => 'error', 'message' => 'Вы не указали Описание услуги');
         }
 
         $project_invoice = $project->addInvoice($new_invoice);
         Notify::createAddInvoice($project_invoice, $project);
+
         return $this->get($project->last_id);
 
     }
@@ -347,7 +433,10 @@ class Projects extends Controller
         $me = request()->user();
         $user_id = request()->user()->last_id;
 
-        $project_user = ProjectUser::query()->where("project_id", $id)->where("user_id", $me->last_id)->where("isapprove", 0)->first();
+        $project_user = ProjectUser::query()->where("project_id", $id)->where("user_id", $me->last_id)->where(
+            "isapprove",
+            0
+        )->first();
         if ($project_user) {
             $project_user->isapprove = 1;
             $project_user->save();
@@ -355,29 +444,54 @@ class Projects extends Controller
 
         $develops_category = array();
         if ($me->isdeveloper == 1) {
-            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('last_id')->toArray();
+            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck(
+                'category_id'
+            )->toArray();
 
         }
 
 
-        $project = Project::query()->with("main_project", "client", "tasks", "tasks.status_row", "tasks.client", "invoices", "invoices.final", "comments", "comments.comments", "comments.comments.user", "comments.user", "status_row", "offers", "offers.comments", "offers.comments.user", "offers.developer")->where(function ($query) use ($me, $develops_category) {
+        $project = Project::query()->with(
+            "main_project",
+            "client",
+            "tasks",
+            "tasks.status_row",
+            "tasks.client",
+            "invoices",
+            "invoices.final",
+            "comments",
+            "comments.comments",
+            "comments.comments.user",
+            "comments.user",
+            "status_row",
+            "offers",
+            "offers.comments",
+            "offers.comments.user",
+            "offers.developer"
+        )->where(
+            function ($query) use ($me, $develops_category) {
 
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
 
-                $sub_query->orWhere("developer_id", $me->last_id);
+                        $sub_query->orWhere("developer_id", $me->last_id);
 
-                $sub_query->orHas("spectator");
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+                        $sub_query->orHas("spectator");
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
+                }
+
+
             }
-
-
-        })->where("last_id", $id)->first();
+        )->where("last_id", $id)->first();
 
         if (!$project) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
@@ -388,8 +502,10 @@ class Projects extends Controller
         }
         if ($project->client_id == $user_id) {
             $role = "client";
-        } else if ($project->developer_id == 0 and in_array($project->category_id, $develops_category)) {
-            $role = "developer";
+        } else {
+            if ($project->developer_id == 0 and in_array($project->category_id, $develops_category)) {
+                $role = "developer";
+            }
         }
 
 
@@ -401,7 +517,10 @@ class Projects extends Controller
             $edit_offer->comment = null;
             $edit_offer->last_id = null;
             if ($role == "developer") {
-                $offer = ProjectOffer::query()->where("project_id", $project->last_id)->where("developer_id", request()->user()->last_id)->first();
+                $offer = ProjectOffer::query()->where("project_id", $project->last_id)->where(
+                    "developer_id",
+                    request()->user()->last_id
+                )->first();
                 if ($offer) {
                     $edit_offer = $offer;
                 }
@@ -412,13 +531,15 @@ class Projects extends Controller
 
         $project->statuses = array();
         if ($project->status_row->iswork == 1) {
-            $project->statuses = Status::query()->where(function ($query) {
-                $query->orWhere("iswork", 1);
-                $query->orWhere("isfinish", 1);
-            })->get();
+            $project->statuses = Status::query()->where(
+                function ($query) {
+                    $query->orWhere("iswork", 1);
+                    $query->orWhere("isfinish", 1);
+                }
+            )->get();
         }
         $users = $project->getUsers();
-        if (isset($users['last_id_' . $user_id]) and $users['last_id_' . $user_id]->role == "spectator") {
+        if (isset($users['last_id_'.$user_id]) and $users['last_id_'.$user_id]->role == "spectator") {
             $role = "spectator";
         }
 
@@ -434,7 +555,9 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
-        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
+                $form['json']['blocks']
+            ) > 0) {
             foreach ($form['json']['blocks'] as $block) {
 
 
@@ -457,10 +580,12 @@ class Projects extends Controller
 
         $form['name_project'] = $header;
 
-        $project = Project::query()->where(function ($query) use ($user) {
-            $query->orWhere("developer_id", $user->last_id);
-            $query->orWhere("client_id", $user->last_id);
-        })->where("last_id", $id)->first();
+        $project = Project::query()->where(
+            function ($query) use ($user) {
+                $query->orWhere("developer_id", $user->last_id);
+                $query->orWhere("client_id", $user->last_id);
+            }
+        )->where("last_id", $id)->first();
 
         if (!$project) {
             return array('type' => 'error', 'message' => 'Исходный проект не найден!');
@@ -483,7 +608,7 @@ class Projects extends Controller
         if (isset($form['developer']) and is_numeric($form['developer'])) {
             $developer = User::query()->where("last_id", $form['developer'])->first();
             $users = $project->getUsers();
-            if (!$developer and isset($users['last_id_' . $developer['last_id']]) and $users['last_id_' . $developer['last_id']]->role == "spectator") {
+            if (!$developer and isset($users['last_id_'.$developer['last_id']]) and $users['last_id_'.$developer['last_id']]->role == "spectator") {
 
                 return array('type' => 'error', 'message' => 'Исполнитель не найден!');
             }
@@ -504,10 +629,12 @@ class Projects extends Controller
 
         Notify::createAddTask($new_project, $project);
 
-        $tasks = Project::query()->with("client", "status_row")->where('main_project_id', $project->last_id)->where(function ($query) use ($user) {
-            $query->orWhere("developer_id", $user->last_id);
-            $query->orWhere("client_id", $user->last_id);
-        })->get();
+        $tasks = Project::query()->with("client", "status_row")->where('main_project_id', $project->last_id)->where(
+            function ($query) use ($user) {
+                $query->orWhere("developer_id", $user->last_id);
+                $query->orWhere("client_id", $user->last_id);
+            }
+        )->get();
 
         return array('type' => 'success', 'tasks' => $tasks);
 
@@ -522,7 +649,9 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
-        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
+                $form['json']['blocks']
+            ) > 0) {
             foreach ($form['json']['blocks'] as $block) {
 
 
@@ -545,10 +674,12 @@ class Projects extends Controller
 
         $form['name_project'] = $header;
 
-        $project = Project::query()->where(function ($query) use ($user) {
-            $query->orWhere("client_id", $user->last_id);
-            $query->orWhere('developer_id', $user->last_id);
-        })->where("last_id", $id)->first();
+        $project = Project::query()->where(
+            function ($query) use ($user) {
+                $query->orWhere("client_id", $user->last_id);
+                $query->orWhere('developer_id', $user->last_id);
+            }
+        )->where("last_id", $id)->first();
 
         if (!$project) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
@@ -571,7 +702,9 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
-        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+        if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
+                $form['json']['blocks']
+            ) > 0) {
             foreach ($form['json']['blocks'] as $block) {
 
 

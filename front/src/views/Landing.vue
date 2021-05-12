@@ -137,7 +137,7 @@
           </div>
         </div>
       </section>
-      <section class="section section section-shaped my-0 overflow-hidden" v-if="posts && posts.length>0">
+      <section class="section section section-shaped my-0 overflow-hidden" >
         <div class="shape shape-style-1 bg-gradient-warning ">
           <span></span>
           <span></span>
@@ -160,7 +160,7 @@
               </div>
             </div>
 
-            <div class="row col-md-12 mt-3">
+            <div class="row col-md-12 mt-3" v-if="posts && posts.length>0">
               <div class="col-md-4  "
                    v-for="post in posts"
                    :key="post.last_id">
