@@ -85,7 +85,7 @@ class Freelance extends Controller
         $user_id = request()->user()->last_id;
         $develops_category = array();
         if ($me->isdeveloper == 1) {
-            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('last_id')->toArray();
+            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('category_id')->toArray();
 
         }
 
@@ -153,7 +153,7 @@ class Freelance extends Controller
             return array('type' => 'error', 'message' => 'Вы не разработчик вы не можете отвечать ');
 
         }
-        $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('last_id')->toArray();
+        $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('category_id')->toArray();
 
 
         $project = Project::query()->with("client", "status_row")->where(function ($query) use ($me, $develops_category) {
