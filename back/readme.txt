@@ -37,6 +37,11 @@
    
     
 
+Тестирование
+Перед запуском тестов выполните миграции
+php artisan migrate --env=testing
+./vendor/bin/phpunit
+
 
    
    

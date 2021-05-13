@@ -21,31 +21,38 @@ class Freelance extends Controller
     {
 
         $me = request()->user();
-        $project = Project::query()->where(function ($query) use ($me) {
+        $project = Project::query()->where(
+            function ($query) use ($me) {
 
-            $query->orWhere(function ($sub_query) use ($me) {
-                $sub_query->where("client_id", $me->last_id);
-                $sub_query->where("developer_id", 0);
+                $query->orWhere(
+                    function ($sub_query) use ($me) {
+                        $sub_query->where("client_id", $me->last_id);
+                        $sub_query->where("developer_id", 0);
 
-            });
+                    }
+                );
 
 
-        })->where("last_id", $project_id)->first();
+            }
+        )->where("last_id", $project_id)->first();
+
+
+
 
         if (!$project) {
-            return array('type' => 'error', 'message' => 'Проект не найден!');
+            return array('type' => 'error', 'err_code' => 'project_not_found', 'message' => 'Проект не найден!');
         }
         $offer = ProjectOffer::query()->where("project_id", $project->last_id)->where("last_id", $offer_id)->first();
 
 
         if (!$offer) {
-            return array('type' => 'error', 'message' => 'Разработчик не найден!');
+            return array('type' => 'error', 'err_code' => 'dev_not_found', 'message' => 'Разработчик не найден!');
         }
 
         $project->developer_id = $offer->developer_id;
         $status = Status::query()->where("iswork", 1)->first();
         if (!$status) {
-            return array('type' => 'error', 'message' => 'Статус не найден!');
+            return array('type' => 'error', 'err_code' => 'status_not_found', 'message' => 'Статус не найден!');
         }
         $project->status = $status->last_id;
 
@@ -63,15 +70,28 @@ class Freelance extends Controller
 
         Notify::createChooseOffer($offer, $project);
 
-        $project = Project::query()->with("tasks", "tasks.client", "client", "status_row", "offers", "offers.comments", "offers.comments.user", "offers.developer")->where(function ($query) use ($me, $offer) {
+        $project = Project::query()->with(
+            "tasks",
+            "tasks.client",
+            "client",
+            "status_row",
+            "offers",
+            "offers.comments",
+            "offers.comments.user",
+            "offers.developer"
+        )->where(
+            function ($query) use ($me, $offer) {
 
-            $query->orWhere(function ($sub_query) use ($me, $offer) {
-                $sub_query->where("client_id", $me->last_id);
-                $sub_query->where("developer_id", $offer->developer_id);
-            });
+                $query->orWhere(
+                    function ($sub_query) use ($me, $offer) {
+                        $sub_query->where("client_id", $me->last_id);
+                        $sub_query->where("developer_id", $offer->developer_id);
+                    }
+                );
 
 
-        })->where("last_id", $project->last_id)->first();
+            }
+        )->where("last_id", $project->last_id)->first();
 
 
         return array('type' => 'success', 'project' => $project);
@@ -85,40 +105,50 @@ class Freelance extends Controller
         $user_id = request()->user()->last_id;
         $develops_category = array();
         if ($me->isdeveloper == 1) {
-            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('category_id')->toArray();
+            $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck(
+                'category_id'
+            )->toArray();
 
         }
 
 
-        $project = Project::query()->where(function ($query) use ($me, $develops_category) {
+        $project = Project::query()->where(
+            function ($query) use ($me, $develops_category) {
 
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
-                $sub_query->orWhere("client_id", $me->last_id);
-                if ($me->isdeveloper == 1) {
-                    $sub_query->orWhere("developer_id", $me->last_id);
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
+                        $sub_query->orWhere("client_id", $me->last_id);
+                        if ($me->isdeveloper == 1) {
+                            $sub_query->orWhere("developer_id", $me->last_id);
+                        }
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
                 }
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+
+
             }
-
-
-        })->where("last_id", $id)->first();
+        )->where("last_id", $id)->first();
 
         if (!$project) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
         }
 
-        $offer = ProjectOffer::query()->where(function ($query) use ($project, $me, $offer_id) {
-            $query->where("project_id", $project->last_id);
-            $query->where("last_id", $offer_id);
-            if ($project->client_id != $me->last_id) {
-                $query->where("developer_id", $me->last_id);
+        $offer = ProjectOffer::query()->where(
+            function ($query) use ($project, $me, $offer_id) {
+                $query->where("project_id", $project->last_id);
+                $query->where("last_id", $offer_id);
+                if ($project->client_id != $me->last_id) {
+                    $query->where("developer_id", $me->last_id);
+                }
             }
-        })->first();
+        )->first();
         if (!$offer) {
             return array('type' => 'error', 'message' => 'Предложение не найдено!');
         }
@@ -153,26 +183,34 @@ class Freelance extends Controller
             return array('type' => 'error', 'message' => 'Вы не разработчик вы не можете отвечать ');
 
         }
-        $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck('category_id')->toArray();
+        $develops_category = UserCategory::query()->where("user_id", $me->last_id)->get()->pluck(
+            'category_id'
+        )->toArray();
 
 
-        $project = Project::query()->with("client", "status_row")->where(function ($query) use ($me, $develops_category) {
+        $project = Project::query()->with("client", "status_row")->where(
+            function ($query) use ($me, $develops_category) {
 
-            $query->orWhere(function ($sub_query) use ($me, $develops_category) {
+                $query->orWhere(
+                    function ($sub_query) use ($me, $develops_category) {
 
 
-                $sub_query->where("developer_id", $me->last_id);
+                        $sub_query->where("developer_id", $me->last_id);
 
-            });
-            if (count($develops_category) > 0) {
-                $query->orWhere(function ($sub_query2) use ($me, $develops_category) {
-                    $sub_query2->where("developer_id", 0);
-                    $sub_query2->where("category_id", $develops_category);
-                });
+                    }
+                );
+                if (count($develops_category) > 0) {
+                    $query->orWhere(
+                        function ($sub_query2) use ($me, $develops_category) {
+                            $sub_query2->where("developer_id", 0);
+                            $sub_query2->where("category_id", $develops_category);
+                        }
+                    );
+                }
+
+
             }
-
-
-        })->where("last_id", $project_id)->first();
+        )->where("last_id", $project_id)->first();
 
         if (!$project) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
@@ -192,7 +230,10 @@ class Freelance extends Controller
             return array('type' => 'error', 'message' => 'Вы не указали комментарий');
         }
 
-        $project_offer = ProjectOffer::query()->with("developer")->where("project_id", $project->last_id)->where("developer_id", $me->last_id)->first();
+        $project_offer = ProjectOffer::query()->with("developer")->where("project_id", $project->last_id)->where(
+            "developer_id",
+            $me->last_id
+        )->first();
 
 
         if (!$project_offer) {

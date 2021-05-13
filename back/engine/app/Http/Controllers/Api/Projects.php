@@ -270,7 +270,7 @@ class Projects extends Controller
 
         Notify::createNewStatus($status, $project);
 
-        return array('type' => 'success');
+        return array('type' => 'success', 'new_status' => $status);
 
 
     }
@@ -376,7 +376,11 @@ class Projects extends Controller
             }
         )->first();
         if (!($project)) {
-            return array('type' => 'error', 'message' => 'Проект не найден, либо вы не являетесь разработчиком!');
+            return array(
+                'type' => 'error',
+                'err_code' => 'project_not_found',
+                'message' => 'Проект не найден, либо вы не являетесь разработчиком!',
+            );
         }
         $new_invoice = request()->post();
         $user_invoice = null;
@@ -387,42 +391,56 @@ class Projects extends Controller
         }
 
         if (!$user_invoice) {
-            return array('type' => 'error', 'message' => 'Вы не указали пользователя к кому будет привязан счет!');
+            return array(
+                'type' => 'error',
+                'err_code' => 'user_invoice_not_found',
+                'message' => 'Вы не указали пользователя к кому будет привязан счет!',
+            );
         }
 
         $types_available = array('client', 'developer');
         if (!(isset($new_invoice['type']) and in_array($new_invoice['type'], $types_available))) {
-            return array('type' => 'error', 'message' => 'Вы не выбрали ТИП счета');
+            return array('type' => 'error', 'err_code' => 'type_is_missing', 'message' => 'Вы не выбрали ТИП счета');
         }
 
         if ($new_invoice['type'] == "developer") {
             $users = $project->getUsers();
             if (!(isset($users['last_id_'.$user_invoice->last_id]) and $users['last_id_'.$user_invoice->last_id]->role == "spectator")) {
-                return array('type' => 'error', 'message' => 'Разработчиком может выступать только наблюдатель!');
+                return array(
+                    'type' => 'error',
+                    'err_code' => 'user_is_not_developer',
+                    'message' => 'Разработчиком может выступать только наблюдатель!',
+                );
             }
         }
 
 
         if (!(isset($new_invoice['sum']) and is_numeric($new_invoice['sum']) and (int)$new_invoice['sum'] > 0)) {
-            return array('type' => 'error', 'message' => 'Вы не указали сумму');
+            return array('type' => 'error', 'err_code' => 'sum_is_missing', 'message' => 'Вы не указали сумму');
         }
 
         if (!(isset($new_invoice['currency']) and is_string($new_invoice['currency']) and strlen(
                     $new_invoice['currency']
                 )) > 0) {
-            return array('type' => 'error', 'message' => 'Вы не указали валюту');
+            return array('type' => 'error', 'err_code' => 'currency_not_set', 'message' => 'Вы не указали валюту');
         }
 
         if (!(isset($new_invoice['title']) and is_string($new_invoice['title']) and strlen(
                 $new_invoice['title']
             ) > 0)) {
-            return array('type' => 'error', 'message' => 'Вы не указали Описание услуги');
+            return array(
+                'type' => 'error',
+                'err_code' => 'title_is_missing',
+                'message' => 'Вы не указали Описание услуги',
+            );
         }
 
         $project_invoice = $project->addInvoice($new_invoice);
         Notify::createAddInvoice($project_invoice, $project);
+        $result = $this->get($project->last_id);
+        $result['invoice_id'] = $project_invoice->last_id;
 
-        return $this->get($project->last_id);
+        return $result;
 
     }
 
@@ -721,7 +739,11 @@ class Projects extends Controller
 
 
         if ($header == null) {
-            return array('type' => 'error', 'message' => 'Вы не указали Название проекта');
+            return array(
+                'type' => 'error',
+                'err_code' => 'name_project_missing',
+                'message' => 'Вы не указали Название проекта',
+            );
         }
 
 
@@ -730,7 +752,7 @@ class Projects extends Controller
             $category = Category::query()->where("last_id", $form['category'])->first();
         }
         if (!isset($category)) {
-            return array('type' => 'error', 'message' => 'Вы не указали Тип');
+            return array('type' => 'error', 'err_code' => 'type_not_found', 'message' => 'Вы не указали Тип');
         }
 
         $form['category'] = $category;

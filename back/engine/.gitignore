@@ -13,3 +13,5 @@ npm-debug.log
 yarn-error.log
 composer.phar
 /db_json/
+/.env.testing
+/db_json_test/
