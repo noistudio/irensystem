@@ -13,10 +13,13 @@ class Notify extends Controller
         $user = request()->user();
         $form = request()->post();
 
-        if ($form['show_only_unread'] == true) {
-            return \App\Notify::query()->with("who")->where("user_id", $user->last_id)->where("isread", 0)->orderByDesc("created_at")->get();
+        if (isset($form['show_only_unread']) and $form['show_only_unread'] == true) {
+            return \App\Notify::query()->with("who")->where("user_id", $user->last_id)->where("isread", 0)->orderByDesc(
+                "created_at"
+            )->get();
         } else {
-            return \App\Notify::query()->with("who")->where("user_id", $user->last_id)->orderByDesc("created_at")->get();
+            return \App\Notify::query()->with("who")->where("user_id", $user->last_id)->orderByDesc("created_at")->get(
+            );
         }
 
 
@@ -25,6 +28,7 @@ class Notify extends Controller
     public function readall()
     {
         \App\Notify::query()->where("user_id", request()->user()->last_id)->update(array('isread' => 1));
+
         return array('type' => 'success');
     }
 
@@ -58,7 +62,10 @@ class Notify extends Controller
     {
         $user = request()->user();
         $result = array();
-        $result['count'] = \App\Notify::query()->with("who")->where("user_id", $user->last_id)->where("isread", 0)->count();
+        $result['count'] = \App\Notify::query()->with("who")->where("user_id", $user->last_id)->where(
+            "isread",
+            0
+        )->count();
 
         return $result;
     }
