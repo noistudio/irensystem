@@ -241,6 +241,22 @@ class UsersTableSeeder extends Seeder
             ]
         );
 
+
+        DB::table("blog_posts")->insertGetId(
+            [
+                "created_at" => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i::s'),
+                'enable' => 1,
+                'user_id' => $developer_id,
+                'category' => $blog_category_private_id,
+                'disable_comments' => 0,
+                'short' => '{"time":1620830582913,"blocks":[{"id":"5sq4WSJyS4","type":"header","data":{"text":"\u041f\u0440\u043e\u0435\u043a\u0442 \u0434\u043b\u044f \u041f\u0430\u0432\u043b\u0430","level":2}},{"id":"7ViKppDLPV","type":"paragraph","data":{"text":"\u0417\u0434\u0435\u0441\u044c \u043c\u043e\u0433\u0443\u0442 \u0431\u044b\u0442\u044c \u043e\u043f\u0438\u0441\u0430\u043d\u043e \u0431\u0430\u0437\u043e\u0432\u043e\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0432\u0430\u0448\u0435\u0433\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430. \u0430 \u0442\u0430\u043a\u0436\u0435 \u0440\u0430\u0437\u043d\u044b\u0445 \u0442\u0440\u0435\u0431\u043e\u0432\u0430\u043d\u0438\u0439 \u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440:"}},{"id":"hY5fiYoPZY","type":"list","data":{"style":"unordered","items":["\u0417\u043d\u0430\u0442\u044c Laravel","\u0423\u043c\u0435\u0442\u044c \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c \u0441 Vue.js","\u0423\u043c\u0435\u0442\u044c \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c \u0441 REST API"]}}],"version":"2.21.0"}',
+                'content' => '{"time":1620830582913,"blocks":[{"id":"5sq4WSJyS4","type":"header","data":{"text":"\u041f\u0440\u043e\u0435\u043a\u0442 \u0434\u043b\u044f \u041f\u0430\u0432\u043b\u0430","level":2}},{"id":"7ViKppDLPV","type":"paragraph","data":{"text":"\u0417\u0434\u0435\u0441\u044c \u043c\u043e\u0433\u0443\u0442 \u0431\u044b\u0442\u044c \u043e\u043f\u0438\u0441\u0430\u043d\u043e \u0431\u0430\u0437\u043e\u0432\u043e\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0432\u0430\u0448\u0435\u0433\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430. \u0430 \u0442\u0430\u043a\u0436\u0435 \u0440\u0430\u0437\u043d\u044b\u0445 \u0442\u0440\u0435\u0431\u043e\u0432\u0430\u043d\u0438\u0439 \u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440:"}},{"id":"hY5fiYoPZY","type":"list","data":{"style":"unordered","items":["\u0417\u043d\u0430\u0442\u044c Laravel","\u0423\u043c\u0435\u0442\u044c \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c \u0441 Vue.js","\u0423\u043c\u0435\u0442\u044c \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c \u0441 REST API"]}}],"version":"2.21.0"}',
+
+
+            ]
+        );
+
         $status_freelance = DB::table("proj_statuses")->insertGetId(
             [
                 'enable' => 1,

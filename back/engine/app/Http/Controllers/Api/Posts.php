@@ -161,6 +161,7 @@ class Posts extends Controller
             function ($query) use ($post_id) {
                 $query->where("enable", 1);
                 $query->where("last_id", $post_id);
+                $query->where("disable_comments", 0);
                 $query->whereHas(
                     "category_post",
                     function ($query_cat) {
@@ -173,13 +174,13 @@ class Posts extends Controller
             if ($post->category_post->isprivate == 1) {
                 $post->category_post->load("my_access");
                 if (!(isset($post->category_post->my_access) and ($post->category_post->my_access->onlyread == 1 || $post->category_post->my_access->isadmin == 1))) {
-                    return array('type' => 'error', 'message' => 'Пост не найден!');
+                    return array('type' => 'error','error_key'=>'not_access_to_post', 'message' => 'Пост не найден!');
                 }
             }
         }
 
         if (is_null($post)) {
-            return array('type' => 'error', 'message' => 'Пост не найден!');
+            return array('type' => 'error','error_key'=>'post_not_found', 'message' => 'Пост не найден!');
         }
         $comment = PostComment::query()->where(
             function ($query) use ($post, $me, $comment_id) {
@@ -189,13 +190,13 @@ class Posts extends Controller
             }
         )->first();
         if (!$comment) {
-            return array('type' => 'error', 'message' => 'Комментарий не найден!');
+            return array('type' => 'error', 'error_key'=>'comment_not_found','message' => 'Комментарий не найден!');
         }
 
         $form = request()->post();
 
         if (!(isset($form['comment']) and is_string($form['comment']) and strlen($form['comment']) > 0)) {
-            return array('type' => 'error', 'message' => 'Вы не указали комментарий');
+            return array('type' => 'error','error_key'=>'comment_text_not_filled' ,'message' => 'Вы не указали комментарий');
         }
 
         $new_comment = new PostCommentComment();
@@ -221,6 +222,7 @@ class Posts extends Controller
             function ($query) use ($last_id) {
                 $query->where("enable", 1);
                 $query->where("last_id", $last_id);
+                $query->where("disable_comments", 0);
                 $query->whereHas(
                     "category_post",
                     function ($query_cat) {
@@ -234,18 +236,18 @@ class Posts extends Controller
             if ($post->category_post->isprivate == 1) {
                 $post->category_post->load("my_access");
                 if (!(isset($post->category_post->my_access) and ($post->category_post->my_access->onlyread == 1 || $post->category_post->my_access->isadmin == 1))) {
-                    return array('type' => 'error', 'message' => 'Пост не найден!');
+                    return array('type' => 'error','error_key'=>'not_have_access_to_post', 'message' => 'Пост не найден!');
                 }
             }
         }
 
         if (is_null($post)) {
-            return array('type' => 'error', 'message' => 'Пост не найден!');
+            return array('type' => 'error', 'error_key'=>'post_not_found','message' => 'Пост не найден!');
         }
         if (!(isset($newComment['comment']) and is_string($newComment['comment']) and strlen(
                 $newComment['comment']
             ) > 0)) {
-            return array('type' => 'error', 'message' => 'Вы не заполнили комментарий!');
+            return array('type' => 'error','error_key'=>'comment_is_empty', 'message' => 'Вы не заполнили комментарий!');
         }
 
         $comment = new PostComment();
@@ -284,10 +286,15 @@ class Posts extends Controller
         )->orderByDesc("created_at")->limit(6)->first();
 
         if ($post) {
+
             if ($post->category_post->isprivate == 1) {
 
                 if (!(isset($post->my_access) and ($post->my_access->onlyread == 1 || $post->my_access->isadmin == 1))) {
-                    return array('type' => 'error', 'message' => 'Пост не найден!');
+                    return array(
+                        'type' => 'error',
+                        'error_key' => 'not_access_to_post',
+                        'message' => 'Пост не найден!',
+                    );
                 }
             }
         }
@@ -297,7 +304,7 @@ class Posts extends Controller
             return array('type' => 'success', 'post' => $post);
         }
 
-        return array('type' => 'error', 'message' => 'Запись не найдена!');
+        return array('type' => 'error', 'error_key' => 'post_not_found', 'message' => 'Запись не найдена!');
     }
 
     function all($limit, $offset)
@@ -414,14 +421,20 @@ class Posts extends Controller
             )->first();
 
             if (!$category) {
-                return array('type' => 'error', 'message' => 'Вы не указали Категорию');
+                return array(
+                    'type' => 'error',
+                    'error_key' => 'not_set_category',
+                    'message' => 'Вы не указали Категорию',
+                );
             }
+
 
             if (!($category->ispublic == 1)) {
 
                 if (!(isset($category->my_access) and (isset($category->my_access->write) and $category->my_access->write == 1) or (isset($category->my_access->isadmin) and $category->my_access->isadmin == 1))) {
                     return array(
                         'type' => 'error',
+                        'error_key' => 'not_access_to_publish_category',
                         'message' => 'У вас нет доступа для публикации в категорию '.$category->title,
                     );
                 }
@@ -430,12 +443,12 @@ class Posts extends Controller
         }
 
         if (!isset($category)) {
-            return array('type' => 'error', 'message' => 'Вы не указали Категорию');
+            return array('type' => 'error', 'error_key' => 'not_set_category', 'message' => 'Вы не указали Категорию');
         }
 
 
         if (!(isset($form['json']['blocks']) and count($form['json']['blocks']) > 0)) {
-            return array('type' => 'error', 'message' => 'Вы не ввели текст поста');
+            return array('type' => 'error', 'error_key' => 'text_not_filled', 'message' => 'Вы не ввели текст поста');
         }
         $short = array();
         $short = $form['json'];
@@ -475,7 +488,7 @@ class Posts extends Controller
                 }
             )->orderByDesc("created_at")->limit(6)->first();
             if (!$new_post) {
-                return array('type' => 'error', 'message' => 'Пост не найден!');
+                return array('type' => 'error', 'error_key' => 'post_not_found', 'message' => 'Пост не найден!');
             }
         }
         $new_post->enable = 1;
