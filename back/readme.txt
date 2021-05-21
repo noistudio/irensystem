@@ -42,6 +42,11 @@
 php artisan migrate --env=testing
 ./vendor/bin/phpunit
 
+Интеграция с Яндекс Диск.
+Добавьте крон команду
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+Эта команда раз в минуту выгружает загруженные файлы в яндекс.диск
+
 
    
    

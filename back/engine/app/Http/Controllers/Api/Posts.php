@@ -15,6 +15,7 @@ use App\PostComment;
 use App\PostCommentComment;
 use App\Project;
 use App\Subcomment;
+use EditorJS\EditorJS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -174,13 +175,17 @@ class Posts extends Controller
             if ($post->category_post->isprivate == 1) {
                 $post->category_post->load("my_access");
                 if (!(isset($post->category_post->my_access) and ($post->category_post->my_access->onlyread == 1 || $post->category_post->my_access->isadmin == 1))) {
-                    return array('type' => 'error','error_key'=>'not_access_to_post', 'message' => 'Пост не найден!');
+                    return array(
+                        'type' => 'error',
+                        'error_key' => 'not_access_to_post',
+                        'message' => 'Пост не найден!',
+                    );
                 }
             }
         }
 
         if (is_null($post)) {
-            return array('type' => 'error','error_key'=>'post_not_found', 'message' => 'Пост не найден!');
+            return array('type' => 'error', 'error_key' => 'post_not_found', 'message' => 'Пост не найден!');
         }
         $comment = PostComment::query()->where(
             function ($query) use ($post, $me, $comment_id) {
@@ -190,18 +195,22 @@ class Posts extends Controller
             }
         )->first();
         if (!$comment) {
-            return array('type' => 'error', 'error_key'=>'comment_not_found','message' => 'Комментарий не найден!');
+            return array('type' => 'error', 'error_key' => 'comment_not_found', 'message' => 'Комментарий не найден!');
         }
 
         $form = request()->post();
 
         if (!(isset($form['comment']) and is_string($form['comment']) and strlen($form['comment']) > 0)) {
-            return array('type' => 'error','error_key'=>'comment_text_not_filled' ,'message' => 'Вы не указали комментарий');
+            return array(
+                'type' => 'error',
+                'error_key' => 'comment_text_not_filled',
+                'message' => 'Вы не указали комментарий',
+            );
         }
 
         $new_comment = new PostCommentComment();
         $new_comment->user_id = $me->last_id;
-        $new_comment->comment = $form['comment'];
+        $new_comment->comment = strip_tags($form['comment']);
         $new_comment->post_id = $post_id;
         $new_comment->comment_id = $comment->last_id;
         $new_comment->save();
@@ -236,23 +245,31 @@ class Posts extends Controller
             if ($post->category_post->isprivate == 1) {
                 $post->category_post->load("my_access");
                 if (!(isset($post->category_post->my_access) and ($post->category_post->my_access->onlyread == 1 || $post->category_post->my_access->isadmin == 1))) {
-                    return array('type' => 'error','error_key'=>'not_have_access_to_post', 'message' => 'Пост не найден!');
+                    return array(
+                        'type' => 'error',
+                        'error_key' => 'not_have_access_to_post',
+                        'message' => 'Пост не найден!',
+                    );
                 }
             }
         }
 
         if (is_null($post)) {
-            return array('type' => 'error', 'error_key'=>'post_not_found','message' => 'Пост не найден!');
+            return array('type' => 'error', 'error_key' => 'post_not_found', 'message' => 'Пост не найден!');
         }
         if (!(isset($newComment['comment']) and is_string($newComment['comment']) and strlen(
                 $newComment['comment']
             ) > 0)) {
-            return array('type' => 'error','error_key'=>'comment_is_empty', 'message' => 'Вы не заполнили комментарий!');
+            return array(
+                'type' => 'error',
+                'error_key' => 'comment_is_empty',
+                'message' => 'Вы не заполнили комментарий!',
+            );
         }
 
         $comment = new PostComment();
         $comment->user_id = $user_id;
-        $comment->comment = $newComment['comment'];
+        $comment->comment = strip_tags($newComment['comment']);
         $comment->post_id = $post->last_id;
         $comment->enable = 1;
         $comment->save();
@@ -450,9 +467,40 @@ class Posts extends Controller
         if (!(isset($form['json']['blocks']) and count($form['json']['blocks']) > 0)) {
             return array('type' => 'error', 'error_key' => 'text_not_filled', 'message' => 'Вы не ввели текст поста');
         }
+
+
+        if (isset($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+            foreach ($form['json']['blocks'] as $key => $block) {
+
+                if ($block['type'] == "image" and ((isset($block['data']['caption']) and mb_strlen(
+                                $block['data']['caption']
+                            ) == 0) or (isset($block['data']['caption']) and is_null($block['data']['caption'])))) {
+                    unset($block['data']['caption']);
+                }
+                $form['json']['blocks'][$key] = $block;
+            }
+
+        }
+
+
         $short = array();
         $short = $form['json'];
         $short['blocks'] = array();
+
+        $result_config = \editjs\models\BlocksModel::getConfig();
+
+
+        try {
+            $editor = new EditorJS(json_encode($form['json']), $result_config['config']);
+        } catch (\Exception $e) {
+            return array(
+                'type' => 'error',
+                'error_key' => 'text_not_filled',
+                'message' => $e->getMessage(),
+            );
+
+        }
+
 
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']

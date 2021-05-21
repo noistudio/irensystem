@@ -44,12 +44,14 @@ class RouteServiceProvider extends ServiceProvider
         $folders = scandir($plugins_dir);
         foreach ($folders as $folder) {
             if ($folder != "." and $folder != "..") {
+                if ($folder == "content" || $folder == "files" || $folder == "editjs" || $folder == "adminmenu" || $folder == "admins") {
 
-                if (file_exists($plugins_dir . "" . $folder . "/routes.php")) {
+                    if (file_exists($plugins_dir."".$folder."/routes.php")) {
 
-                    Route::middleware('web')
-                        ->namespace($this->namespace)
-                        ->group($plugins_dir . "" . $folder . "/routes.php");
+                        Route::middleware('web')
+                            ->namespace($this->namespace)
+                            ->group($plugins_dir."".$folder."/routes.php");
+                    }
                 }
             }
         }

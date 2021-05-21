@@ -2,18 +2,21 @@
 
 namespace managers\backend\controllers;
 
-class SetupBackend extends \managers\backend\AdminController {
+class SetupBackend extends \managers\backend\AdminController
+{
 
     /**
      * Handle an authentication attempt.
      *
      * @return Response
      */
-    function __construct($is_plugin = false) {
+    function __construct($is_plugin = false)
+    {
         parent::__construct($is_plugin);
     }
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
 
 
 //        \Artisan::call("vendor:publish --tag=laravel-errors");
@@ -29,7 +32,8 @@ class SetupBackend extends \managers\backend\AdminController {
         return $this->render("setup", $data);
     }
 
-    public function actionSave() {
+    public function actionSave()
+    {
 
         $ip = \Request::ip();
 
@@ -42,7 +46,40 @@ class SetupBackend extends \managers\backend\AdminController {
         if (isset($post['name']) and is_string($post['name']) and strlen($post['name']) > 0) {
             $array['APP_BACKEND_COPYRIGHT_TITLE'] = $post['name'];
         }
-        if (isset($post['disable_message']) and is_string($post['disable_message']) and strlen($post['disable_message']) > 0) {
+        if (isset($post['YANDEX_API_WEB_DAV_TOKEN']) and is_string($post['YANDEX_API_WEB_DAV_TOKEN']) and strlen(
+                $post['YANDEX_API_WEB_DAV_TOKEN']
+            ) > 0) {
+            $array['YANDEX_API_WEB_DAV_TOKEN'] = $post['YANDEX_API_WEB_DAV_TOKEN'];
+            $config['YANDEX_API_WEB_DAV_TOKEN'] = $post['YANDEX_API_WEB_DAV_TOKEN'];
+        }
+        if (isset($post['YANDEX_FOLDER']) and is_string($post['YANDEX_FOLDER']) and strlen(
+                $post['YANDEX_FOLDER']
+            ) > 0) {
+            $array['YANDEX_FOLDER'] = $post['YANDEX_FOLDER'];
+            $config['YANDEX_FOLDER'] = $post['YANDEX_FOLDER'];
+        }
+        if (isset($post['TELEGRAM_BOT_TOKEN']) and is_string($post['TELEGRAM_BOT_TOKEN']) and strlen(
+                $post['TELEGRAM_BOT_TOKEN']
+            ) > 0) {
+            $array['TELEGRAM_BOT_TOKEN'] = $post['TELEGRAM_BOT_TOKEN'];
+            $config['TELEGRAM_BOT_TOKEN'] = $post['TELEGRAM_BOT_TOKEN'];
+        }
+
+        if (isset($post['TELEGRAM_BOT_USERNAME']) and is_string($post['TELEGRAM_BOT_USERNAME']) and strlen(
+                $post['TELEGRAM_BOT_USERNAME']
+            ) > 0) {
+            $array['TELEGRAM_BOT_USERNAME'] = $post['TELEGRAM_BOT_USERNAME'];
+            $config['TELEGRAM_BOT_USERNAME'] = $post['TELEGRAM_BOT_USERNAME'];
+        }
+
+        if (isset($post['FRONT_URL']) and is_string($post['FRONT_URL']) and strlen($post['FRONT_URL']) > 0) {
+            $array['FRONT_URL'] = $post['FRONT_URL'];
+            $config['FRONT_URL'] = $post['FRONT_URL'];
+        }
+
+        if (isset($post['disable_message']) and is_string($post['disable_message']) and strlen(
+                $post['disable_message']
+            ) > 0) {
             $array['APP_DISABLED_MESSAGE'] = $post['disable_message'];
             $config['APP_DISABLED_MESSAGE'] = $array['APP_DISABLED_MESSAGE'];
         }
@@ -66,22 +103,23 @@ class SetupBackend extends \managers\backend\AdminController {
             foreach ($langs as $lang) {
                 $u_lang = strtoupper($lang);
 
-                if (isset($post['APP_TITLE_' . $u_lang]) and is_string($post['APP_TITLE_' . $u_lang])) {
-                    $array['APP_TITLE_' . $u_lang] = $post['APP_TITLE_' . $u_lang];
-                    $config['APP_TITLE_' . $u_lang] = $post['APP_TITLE_' . $u_lang];
+                if (isset($post['APP_TITLE_'.$u_lang]) and is_string($post['APP_TITLE_'.$u_lang])) {
+                    $array['APP_TITLE_'.$u_lang] = $post['APP_TITLE_'.$u_lang];
+                    $config['APP_TITLE_'.$u_lang] = $post['APP_TITLE_'.$u_lang];
                 }
-                if (isset($post['APP_META_KEYWORDS_' . $u_lang]) and is_string($post['APP_META_KEYWORDS_' . $u_lang])) {
-                    $array['APP_META_KEYWORDS_' . $u_lang] = $post['APP_META_KEYWORDS_' . $u_lang];
-                    $config['APP_META_KEYWORDS_' . $u_lang] = $post['APP_META_KEYWORDS_' . $u_lang];
+                if (isset($post['APP_META_KEYWORDS_'.$u_lang]) and is_string($post['APP_META_KEYWORDS_'.$u_lang])) {
+                    $array['APP_META_KEYWORDS_'.$u_lang] = $post['APP_META_KEYWORDS_'.$u_lang];
+                    $config['APP_META_KEYWORDS_'.$u_lang] = $post['APP_META_KEYWORDS_'.$u_lang];
                 }
 
-                if (isset($post['APP_META_DESCRIPTION_' . $u_lang]) and is_string($post['APP_META_DESCRIPTION_' . $u_lang])) {
-                    $array['APP_META_DESCRIPTION_' . $u_lang] = $post['APP_META_DESCRIPTION_' . $u_lang];
-                    $config['APP_META_DESCRIPTION_' . $u_lang] = $post['APP_META_DESCRIPTION_' . $u_lang];
+                if (isset($post['APP_META_DESCRIPTION_'.$u_lang]) and is_string(
+                        $post['APP_META_DESCRIPTION_'.$u_lang]
+                    )) {
+                    $array['APP_META_DESCRIPTION_'.$u_lang] = $post['APP_META_DESCRIPTION_'.$u_lang];
+                    $config['APP_META_DESCRIPTION_'.$u_lang] = $post['APP_META_DESCRIPTION_'.$u_lang];
                 }
             }
         }
-
 
 
         if (isset($post['disabled']) and $post['disabled'] == "false") {
@@ -99,10 +137,6 @@ class SetupBackend extends \managers\backend\AdminController {
         }
 
 
-
-
-
-
         if (isset($post['link']) and is_string($post['link']) and strlen($post['link']) > 0) {
             $array['APP_BACKEND_COPYRIGHT_LINK'] = $post['link'];
         }
@@ -113,10 +147,10 @@ class SetupBackend extends \managers\backend\AdminController {
             }
 
             if ($array['APP_DISABLED'] == true) {
-                $down_command = "down  --allow=127.0.0.1 --allow=" . $ip . "  ";
+                $down_command = "down  --allow=127.0.0.1 --allow=".$ip."  ";
                 if (isset($config['APP_DISABLED_MESSAGE'])) {
                     $dis_message = $config['APP_DISABLED_MESSAGE'];
-                    $down_command .= '--message="' . $dis_message . '"';
+                    $down_command .= '--message="'.$dis_message.'"';
                 }
 
                 \Artisan::call($down_command);

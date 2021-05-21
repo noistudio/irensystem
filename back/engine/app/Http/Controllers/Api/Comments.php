@@ -22,20 +22,24 @@ class Comments extends Controller
         $newComment = request()->post();
         $project = null;
 
-        $project = Project::query()->where("last_id", $project_id)->where(function ($query) use ($user_id) {
-            $query->orWhere("client_id", $user_id);
-            $query->orWhere("developer_id", $user_id);
-            $query->orHas("spectator");
-        })->first();
+        $project = Project::query()->where("last_id", $project_id)->where(
+            function ($query) use ($user_id) {
+                $query->orWhere("client_id", $user_id);
+                $query->orWhere("developer_id", $user_id);
+                $query->orHas("spectator");
+            }
+        )->first();
 
         if (is_null($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
         }
-        $comment = Comment::query()->where(function ($query) use ($project, $me, $comment_id) {
-            $query->where("project_id", $project->last_id);
-            $query->where("last_id", $comment_id);
+        $comment = Comment::query()->where(
+            function ($query) use ($project, $me, $comment_id) {
+                $query->where("project_id", $project->last_id);
+                $query->where("last_id", $comment_id);
 
-        })->first();
+            }
+        )->first();
         if (!$comment) {
             return array('type' => 'error', 'message' => 'Комментарий не найден!');
         }
@@ -48,12 +52,12 @@ class Comments extends Controller
 
         $new_comment = new Subcomment();
         $new_comment->user_id = $me->last_id;
-        $new_comment->comment = $form['comment'];
+        $new_comment->comment = strip_tags($form['comment']);
         $new_comment->project_id = $project_id;
         $new_comment->comment_id = $comment->last_id;
         $new_comment->save();
 
-        Notify::createSendSubComment($new_comment,$comment,$project);
+        Notify::createSendSubComment($new_comment, $comment, $project);
         $comments = Subcomment::query()->with("user")->where("comment_id", $comment_id)->get();
 
         return array('type' => 'success', "comments" => $comments);
@@ -65,22 +69,26 @@ class Comments extends Controller
         $newComment = request()->post();
         $project = null;
 
-        $project = Project::query()->where("last_id", $project_id)->where(function ($query) use ($user_id) {
-            $query->orWhere("client_id", $user_id);
-            $query->orWhere("developer_id", $user_id);
-            $query->orHas("spectator");
-        })->first();
+        $project = Project::query()->where("last_id", $project_id)->where(
+            function ($query) use ($user_id) {
+                $query->orWhere("client_id", $user_id);
+                $query->orWhere("developer_id", $user_id);
+                $query->orHas("spectator");
+            }
+        )->first();
 
         if (is_null($project)) {
             return array('type' => 'error', 'message' => 'Проект не найден!');
         }
-        if (!(isset($newComment['comment']) and is_string($newComment['comment']) and strlen($newComment['comment']) > 0)) {
+        if (!(isset($newComment['comment']) and is_string($newComment['comment']) and strlen(
+                $newComment['comment']
+            ) > 0)) {
             return array('type' => 'error', 'message' => 'Вы не заполнили комментарий!');
         }
 
         $comment = new Comment();
         $comment->user_id = $user_id;
-        $comment->comment = $newComment['comment'];
+        $comment->comment = strip_tags($newComment['comment']);
         $comment->project_id = $project->last_id;
         $comment->save();
         $comment->load("user");

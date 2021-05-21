@@ -76,11 +76,16 @@ class ProjectsControllerTest extends TestCase
                 'blocks' => [
                     [
                         'type' => 'header',
-                        'data' => ['text' => 'TEST LA LA SUUUPER PROJECT!'],
+                        'data' => ['text' => 'TEST LA LA', 'level' => 2],
                     ],
                     [
                         'type' => 'image',
-                        'data' => ['file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg']],
+                        'data' => [
+                            'withBorder' => false,
+                            'withBackground' => false,
+                            'stretched' => false,
+                            'file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg'],
+                        ],
                     ],
                     [
                         'type' => 'paragraph',
@@ -128,11 +133,16 @@ class ProjectsControllerTest extends TestCase
                 'blocks' => [
                     [
                         'type' => 'header',
-                        'data' => ['text' => 'TEST LA LA'],
+                        'data' => ['text' => 'TEST LA LA', 'level' => 2],
                     ],
                     [
                         'type' => 'image',
-                        'data' => ['file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg']],
+                        'data' => [
+                            'withBorder' => false,
+                            'withBackground' => false,
+                            'stretched' => false,
+                            'file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg'],
+                        ],
                     ],
                     [
                         'type' => 'paragraph',
@@ -179,11 +189,16 @@ class ProjectsControllerTest extends TestCase
                 'blocks' => [
                     [
                         'type' => 'header',
-                        'data' => ['text' => 'TEST LA LA'],
+                        'data' => ['text' => 'TEST LA LA', 'level' => 2],
                     ],
                     [
                         'type' => 'image',
-                        'data' => ['file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg']],
+                        'data' => [
+                            'withBorder' => false,
+                            'withBackground' => false,
+                            'stretched' => false,
+                            'file' => ['url' => 'https://get.wallhere.com/photo/sunlight-landscape-garden-nature-park-tower-tree-flower-landmark-196671.jpg'],
+                        ],
                     ],
                     [
                         'type' => 'paragraph',

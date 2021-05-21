@@ -23,13 +23,15 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'auth/*',
         'api/*',
+       
     ];
 
     public function handle($request, Closure $next)
     {
 
 
-        $this->except[] = \core\ManagerConf::getUrl("backend") . "/editjs/*";
+        $this->except[] = \core\ManagerConf::getUrl("backend")."/editjs/*";
+        $this->except[] = \core\ManagerConf::getUrl("backend")."/editor/*";
 
         return parent::handle($request, $next);
     }

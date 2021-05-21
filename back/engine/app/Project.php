@@ -41,18 +41,21 @@ class Project extends Model
                 }
                 if ($user->last_id == $this->developer_id) {
                     $user->role = "developer";
-                } else if (count($proj_users) > 0) {
-                    foreach ($proj_users as $pro_user) {
-                        if ($pro_user->user_id == $user->last_id) {
-                            $user->role = "spectator";
-                            $user->isapprove = $pro_user->isapprove;
+                } else {
+                    if (count($proj_users) > 0) {
+                        foreach ($proj_users as $pro_user) {
+                            if ($pro_user->user_id == $user->last_id) {
+                                $user->role = "spectator";
+                                $user->isapprove = $pro_user->isapprove;
+                            }
                         }
-                    }
 
+                    }
                 }
-                $new_result['last_id_' . $user->last_id] = $user;
+                $new_result['last_id_'.$user->last_id] = $user;
             }
         }
+
         return $new_result;
 
     }
@@ -62,33 +65,48 @@ class Project extends Model
         return $this->hasOne(User::class, "last_id", "client_id");
     }
 
+    public function developer()
+    {
+        return $this->hasOne(User::class, "last_id", "developer_id");
+    }
+
+
     public function spectator()
     {
-        return $this->hasOne(ProjectUser::class, "project_id", "last_id")->where("user_id", request()->user()->last_id)->where("isapprove", 1);
+        return $this->hasOne(ProjectUser::class, "project_id", "last_id")->where(
+            "user_id",
+            request()->user()->last_id
+        )->where("isapprove", 1);
     }
 
     public function invoices()
     {
         $me = request()->user();
-        return $this->hasMany(ProjectInvoice::class, "project_id", "last_id")->where(function ($sub_query) use ($me) {
-            $sub_query->orWhere("client_id", $me->last_id);
 
-            $sub_query->orWhere("developer_id", $me->last_id);
+        return $this->hasMany(ProjectInvoice::class, "project_id", "last_id")->where(
+            function ($sub_query) use ($me) {
+                $sub_query->orWhere("client_id", $me->last_id);
+
+                $sub_query->orWhere("developer_id", $me->last_id);
 
 
-        });
+            }
+        );
     }
 
     public function tasks()
     {
         $me = request()->user();
-        return $this->hasMany(Project::class, "main_project_id", "last_id")->where(function ($sub_query) use ($me) {
-            $sub_query->orWhere("client_id", $me->last_id);
 
-            $sub_query->orWhere("developer_id", $me->last_id);
+        return $this->hasMany(Project::class, "main_project_id", "last_id")->where(
+            function ($sub_query) use ($me) {
+                $sub_query->orWhere("client_id", $me->last_id);
 
-            $sub_query->orHas("spectator");
-        });
+                $sub_query->orWhere("developer_id", $me->last_id);
+
+                $sub_query->orHas("spectator");
+            }
+        );
     }
 
     public function main_project()
@@ -154,6 +172,7 @@ class Project extends Model
         $new_project->status = $status->last_id;
 
         $new_project->save();
+
         return $new_project;
 
 

@@ -41,6 +41,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        'yandexfiles' => [
+            'driver' => 'local',
+            'root' => storage_path('yandexfiles'),
+        ],
         'forbackup' => [
             'driver' => 'local',
             'root' => storage_path('backups'),

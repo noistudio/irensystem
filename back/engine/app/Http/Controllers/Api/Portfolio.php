@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\PortfolioCategory;
+use EditorJS\EditorJS;
 
 class Portfolio extends Controller
 {
@@ -77,6 +78,35 @@ class Portfolio extends Controller
         $header = null;
         $image = null;
         $description = "";
+
+        if (isset($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+            foreach ($form['json']['blocks'] as $key => $block) {
+
+                if ($block['type'] == "image" and ((isset($block['data']['caption']) and mb_strlen(
+                                $block['data']['caption']
+                            ) == 0) or (isset($block['data']['caption']) and is_null($block['data']['caption'])))) {
+                    unset($block['data']['caption']);
+                }
+                $form['json']['blocks'][$key] = $block;
+            }
+
+        }
+
+        $result_config = \editjs\models\BlocksModel::getConfig();
+
+
+        try {
+            $editor = new EditorJS(json_encode($form['json']), $result_config['config']);
+        } catch (\Exception $e) {
+            return array(
+                'type' => 'error',
+                'error_key' => 'text_not_filled',
+                'message' => $e->getMessage(),
+            );
+
+        }
+
+
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']
             ) > 0) {

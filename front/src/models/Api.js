@@ -61,6 +61,7 @@ export default class Api {
 
 		(async (id, success) => {
 			var api_token = await localStorage.getItem('api_token');
+
 			if (api_token) {
 
 				axios.defaults.headers.common['Authorization'] = `Bearer ` + api_token;

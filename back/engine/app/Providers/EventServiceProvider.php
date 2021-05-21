@@ -15,7 +15,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use core\FrontendEvent;
 
-class EventServiceProvider extends ServiceProvider {
+class EventServiceProvider extends ServiceProvider
+{
 
     /**
      * The event listener mappings for the application.
@@ -32,19 +33,19 @@ class EventServiceProvider extends ServiceProvider {
         ],
         EventAdminLink::class => [
             \admins\events\ListenerAdminLink::class,
-            \logs\events\ListenerAdminLink::class,
-            \blocks\events\ListenerAdminLink::class,
+            //  \logs\events\ListenerAdminLink::class,
+            // \blocks\events\ListenerAdminLink::class,
             \content\events\ListenerAdminLink::class,
             //  \mg\events\ListenerAdminLink::class,
-            \menu\events\ListenerAdminLink::class,
-            \forms\events\ListenerAdminLink::class,
+            // \menu\events\ListenerAdminLink::class,
+            //        \forms\events\ListenerAdminLink::class,
             \files\events\ListenerAdminLink::class,
-            \mailer\events\ListenerAdminLink::class,
-            \cache\events\ListenerAdminLink::class,
-            \languages\events\ListenerAdminLink::class,
-            \routes\events\ListenerAdminLink::class,
-            \share\events\ListenerAdminLink::class,
-            \params\events\ListenerAdminLink::class,
+            //     \mailer\events\ListenerAdminLink::class,
+            // \cache\events\ListenerAdminLink::class,
+            //      \languages\events\ListenerAdminLink::class,
+            //      \routes\events\ListenerAdminLink::class,
+            //      \share\events\ListenerAdminLink::class,
+            //     \params\events\ListenerAdminLink::class,
         ],
         EventAdminRule::class => [
             \logs\events\AdminRule::class,
@@ -66,7 +67,7 @@ class EventServiceProvider extends ServiceProvider {
         ],
         MenuLink::class => [
             \content\events\ContentMenuLink::class,
-        //  \mg\events\MgMenuLink::class,
+            //  \mg\events\MgMenuLink::class,
         ],
         FormAfterSend::class => [],
         FormBeforeSend::class => [],
@@ -77,7 +78,8 @@ class EventServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
         parent::boot();
 
         //

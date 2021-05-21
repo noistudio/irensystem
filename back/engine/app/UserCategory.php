@@ -13,4 +13,13 @@ class UserCategory extends Model
     public $timestamps = true;
     public $primaryKey = "last_id";
 
+    public function category()
+    {
+        return $this->hasOne(Category::class, "last_id", "category_id");
+    }
+    public function user()
+    {
+        return $this->hasOne(User::class, "last_id", "user_id");
+    }
+
 }

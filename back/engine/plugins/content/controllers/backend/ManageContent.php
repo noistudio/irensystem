@@ -2,23 +2,31 @@
 
 namespace content\controllers\backend;
 
+use App\Category;
+use App\Comment;
+use App\Http\Controllers\Api\Portfolio;
+use App\Post;
+use App\Project;
+use App\ProjectInvoice;
+use App\ProjectOffer;
 use content\models\TableModel;
 use content\models\SqlModel;
 use core\AppConfig;
+use editjs\models\BlocksModel;
 use plugsystem\models\NotifyModel;
 use plugsystem\foradmin\UserAdmin;
 
-class ManageContent extends \managers\backend\AdminController {
+class ManageContent extends \managers\backend\AdminController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         AppConfig::set("nav", "content");
     }
 
-    public function actionIndex($nametable, $on_page = null) {
-
-
-
+    public function actionIndex($nametable, $on_page = null)
+    {
 
 
         $post = request()->post();
@@ -42,15 +50,17 @@ class ManageContent extends \managers\backend\AdminController {
             }
             $condition = array('and');
             $condition = array('and');
-            if (isset($get['enable']) and (string) $get['enable'] == "on") {
-                $condition[] = array($nametable . ".enable" => 1);
-            } else if (isset($get['enable']) and (string) $get['enable'] == "off") {
-                $condition[] = array($nametable . ".enable" => 0);
+            if (isset($get['enable']) and (string)$get['enable'] == "on") {
+                $condition[] = array($nametable.".enable" => 1);
+            } else {
+                if (isset($get['enable']) and (string)$get['enable'] == "off") {
+                    $condition[] = array($nametable.".enable" => 0);
+                }
             }
             if (\languages\models\LanguageHelp::is("frontend")) {
                 $languages = \languages\models\LanguageHelp::getAll("frontend");
                 if (isset($get['_lng']) and in_array($get['_lng'], $languages)) {
-                    $condition[] = array($nametable . "._lng" => $get['_lng']);
+                    $condition[] = array($nametable."._lng" => $get['_lng']);
                 }
             }
             $json_fields = json_decode($table->fields, true);
@@ -68,22 +78,26 @@ class ManageContent extends \managers\backend\AdminController {
                     $types_array = array("=", "!=", ">", ">=", "<", "<=", 'LIKE');
 
 
-                    if (isset($get[$namefield]) and isset($get['type_' . $namefield]) and is_string($get['type_' . $namefield]) and in_array($get['type_' . $namefield], $types_array)) {
+                    if (isset($get[$namefield]) and isset($get['type_'.$namefield]) and is_string(
+                            $get['type_'.$namefield]
+                        ) and in_array($get['type_'.$namefield], $types_array)) {
 
-                        $class = "\\content\\fields\\" . $typefield[$namefield]['type'];
+                        $class = "\\content\\fields\\".$typefield[$namefield]['type'];
                         $obj = new $class($get[$namefield], $namefield, $typefield[$namefield]['options']);
                         $curval = $obj->set();
 
                         if (is_null($curval) or strlen($curval) == 0) {
-                            
+
                         } else {
 
-                            $condition[] = array($get['type_' . $namefield], $nametable . "." . $namefield, $curval);
+                            $condition[] = array($get['type_'.$namefield], $nametable.".".$namefield, $curval);
                         }
-                    } else if (!(isset($get['type_' . $namefield]) )) {
-                        
                     } else {
-                        
+                        if (!(isset($get['type_'.$namefield]))) {
+
+                        } else {
+
+                        }
                     }
                 }
             }
@@ -96,7 +110,7 @@ class ManageContent extends \managers\backend\AdminController {
 
                 $data['pages'] = "";
             } else {
-                if (!(is_numeric($on_page) and (int) $on_page > 0)) {
+                if (!(is_numeric($on_page) and (int)$on_page > 0)) {
                     $on_page = 20;
                 }
                 $model->offset($offset);
@@ -108,7 +122,7 @@ class ManageContent extends \managers\backend\AdminController {
 
             $data['fields'] = $model->getFieldsinList();
             $data['needroute'] = false;
-            $path = \core\ManagerConf::getTemplateFolder(true, "frontend") . "plugin/content/" . $nametable . "_list.php";
+            $path = \core\ManagerConf::getTemplateFolder(true, "frontend")."plugin/content/".$nametable."_list.php";
 
             if (file_exists($path)) {
                 $data['needroute'] = true;
@@ -126,15 +140,16 @@ class ManageContent extends \managers\backend\AdminController {
             $data['fields_search'] = \content\models\RowModel::editFields($nametable, $forarray, false);
 
             $data['get_vars_string'] = http_build_query(request()->query->all());
-            if ($this->isExists($nametable . "_list")) {
-                return $this->render($nametable . "_list", $data);
+            if ($this->isExists($nametable."_list")) {
+                return $this->render($nametable."_list", $data);
             } else {
                 return $this->render("list", $data);
             }
         }
     }
 
-    public function actionDoupdate($nametable, $id) {
+    public function actionDoupdate($nametable, $id)
+    {
 
         $post = request()->post();
 
@@ -168,10 +183,12 @@ class ManageContent extends \managers\backend\AdminController {
                 $array = array('type' => 'error', 'message' => $message);
             }
         }
+
         return $array;
     }
 
-    public function actionDoadd($nametable, $id = null) {
+    public function actionDoadd($nametable, $id = null)
+    {
 
         $result = \content\models\RowModel::operation_add($nametable, array(), $id);
         $post = request()->post();
@@ -181,9 +198,9 @@ class ManageContent extends \managers\backend\AdminController {
             $array = array('type' => 'success', 'last_id' => $result, 'message' => __("backend/content.s_add"));
             if (isset($post['btnaccept'])) {
                 //NotifyModel::add("Успешно добавлен!");
-                $array['link'] = \core\ManagerConf::link("content/manage/update/" . $nametable . "/" . $result);
+                $array['link'] = \core\ManagerConf::link("content/manage/update/".$nametable."/".$result);
             }
-            $id = (int) $result;
+            $id = (int)$result;
             $row = $row = \db\SqlQuery::get(array('last_id' => $id), $nametable);
             if (isset($row['enable']) and $row['enable'] == 1) {
                 if (isset($post['shares']) and count($post['shares'])) {
@@ -201,10 +218,12 @@ class ManageContent extends \managers\backend\AdminController {
             }
             $array = array('type' => 'error', 'message' => $message);
         }
+
         return $array;
     }
 
-    public function actionAdd($nametable, $id = null) {
+    public function actionAdd($nametable, $id = null)
+    {
 
         $row = \content\models\RowModel::editFields($nametable, array(), false);
         AppConfig::set("subnav", $nametable);
@@ -219,33 +238,38 @@ class ManageContent extends \managers\backend\AdminController {
             //  $data['share_templates'] = \share\models\ShareModel::allWorked();
 
             $data['csrf'] = csrf_field();
-            if ($this->isExists($nametable . "_add")) {
-                return $this->render($nametable . "_add", $data);
+            if ($this->isExists($nametable."_add")) {
+                return $this->render($nametable."_add", $data);
             } else {
                 return $this->render("add", $data);
             }
         }
     }
 
-    public function actionEnable($nametable, $id) {
+    public function actionEnable($nametable, $id)
+    {
 
         $row = \db\SqlQuery::get(array('last_id' => $id), $nametable);
         $update = array();
         $update['enable'] = 0;
-        if ((int) $row['enable'] == 0) {
+        if ((int)$row['enable'] == 0) {
             $update['enable'] = 1;
         }
-        \db\SqlQuery::update($nametable, $update, array('last_id' => (int) $id));
+        \db\SqlQuery::update($nametable, $update, array('last_id' => (int)$id));
+
         return back();
     }
 
-    public function actionOps($nametable) {
+    public function actionOps($nametable)
+    {
 
         \content\models\RowModel::run_multioperations($nametable);
+
         return back();
     }
 
-    public function actionUpdate($nametable, $id) {
+    public function actionUpdate($nametable, $id)
+    {
 
 
         $row = \db\SqlQuery::get(array('last_id' => $id), $nametable);
@@ -254,6 +278,53 @@ class ManageContent extends \managers\backend\AdminController {
         if (is_array($row)) {
             $data = array();
             $data['table'] = $model->getTable();
+            if ($nametable == "proj_portfolio") {
+                $data['work'] = \App\Portfolio::query()->with(["user", "category"])->where("last_id", $id)->first();
+            }
+            if ($nametable == "blog_posts") {
+                $data['post'] = Post::query()->with(
+                    ["comments.user", "comments.comments.user", "category_post", "user"]
+                )->where("last_id", $id)->first();
+
+                $data['post_content'] = "";
+                if (isset($data['post']->content['blocks'])) {
+                    $result_content = BlocksModel::parseResult(
+                        $data['post']->content['blocks'],
+                        \editjs\models\BlocksModel::getConfig()
+                    );
+                    $data['post_content'] = $result_content['full'];
+
+                }
+
+            }
+            if ($nametable == "proj_projects") {
+
+                $data['project'] = Project::query()->with(
+                    "client",
+                    'main_project',
+                    "developer",
+                    "status_row",
+
+                )->where("last_id", $id)->first();
+
+                $data['tasks'] = Project::query()->with(
+                    "client",
+                    "developer",
+                    "status_row",
+
+                )->where("main_project_id", $id)->get();
+                $data['category_project'] = Category::query()->where("last_id", $data['project']->category_id)->first();
+                $data['offers'] = ProjectOffer::query()->with("developer", "comments.user")->where(
+                    "project_id",
+                    $id
+                )->get();
+                $data['comments'] = Comment::query()->with("comments.user", "user")->where("project_id", $id)->get();
+                $data['project_invoices'] = ProjectInvoice::query()->with("client", "developer", "final")->where(
+                    "project_id",
+                    $id
+                )->get();
+
+            }
 
             $data['row'] = \content\models\RowModel::editFields($nametable, $row);
             $json = json_decode($row['action'], true);
@@ -266,21 +337,22 @@ class ManageContent extends \managers\backend\AdminController {
             $data['id'] = $id;
             // $data['share_templates'] = \share\models\ShareModel::allWorked();
             $data['share_templates'] = array();
-            $path = \core\ManagerConf::getTemplateFolder(true, "frontend") . "plugin/content/" . $nametable . "_one.php";
+            $path = \core\ManagerConf::getTemplateFolder(true, "frontend")."plugin/content/".$nametable."_one.php";
             $data['needroute'] = false;
             if (file_exists($path)) {
                 $data['needroute'] = true;
             }
             $data['csrf'] = csrf_field();
-            if ($this->isExists($nametable . "_edit")) {
-                return $this->render($nametable . "_edit", $data);
+            if ($this->isExists($nametable."_edit")) {
+                return $this->render($nametable."_edit", $data);
             } else {
                 return $this->render("edit", $data);
             }
         }
     }
 
-    public function actionDelete($nametable, $id) {
+    public function actionDelete($nametable, $id)
+    {
 
         $row = \db\SqlQuery::get(array('last_id' => $id), $nametable);
 
@@ -288,6 +360,7 @@ class ManageContent extends \managers\backend\AdminController {
 
             \db\SqlQuery::delete($nametable, array('last_id' => $id));
         }
+
         return back();
     }
 

@@ -1,7 +1,51 @@
 {
-            
   "tools": {
-  "image": {
+    "embed": {
+      "service": {
+        "type": "string",
+        "allowedTags": ""
+      },
+      "source": {
+        "type": "string",
+        "allowedTags": ""
+      },
+      "embed": {
+        "type": "string",
+        "allowedTags": ""
+      },
+      "width": {
+        "type": "integer",
+        "required": false
+      },
+      "height": {
+        "type": "integer",
+        "required": false
+      },
+      "caption": {
+        "type": "string",
+        "allowedTags": "",
+        "required": false
+      }
+    },
+    "attaches": {
+      "title": {
+        "type": "string",
+        "allowedTags": ""
+      },
+      "file": {
+        "type": "array",
+        "data": {
+          "url": "string",
+          "size": {
+            "type": "integer",
+            "required": false
+          },
+          "name": "string",
+          "extension": "string"
+        }
+      }
+    },
+    "image": {
       "file": {
         "type": "array",
         "data": {
@@ -18,79 +62,129 @@
       },
       "caption": {
         "type": "string",
-        "allowedTags": "i,b,a[href],code[class],mark[class]"
+        "allowedTags": "i,b,a[href],code[class],mark[class]",
+        "required": false
       },
       "withBorder": "boolean",
       "withBackground": "boolean",
       "stretched": "boolean"
     },
-    "linkTool":{
-             "link": {
+    "raw": {
+      "html": {
+        "type": "string",
+        "allowedTags": "*"
+      }
+    },
+    "linkTool": {
+      "link": {
         "type": "string",
         "allowedTags": "",
-        "required":true
+        "required": true
       },
       "meta": {
         "type": "array",
         "data": {
-            "title": {
-        "type": "string",
-        "allowedTags": "",
-        "required":false
-        },"keywords": {
-        "type": "string",
-        "allowedTags": "",
-        "required":false
-        },
-        "description": {
-        "type": "string",
-        "allowedTags": "",
-        "required":false
+          "title": {
+            "type": "string",
+            "allowedTags": "",
+            "required": false
+          },
+          "keywords": {
+            "type": "string",
+            "allowedTags": "",
+            "required": false
+          },
+          "description": {
+            "type": "string",
+            "allowedTags": "",
+            "required": false
+          },
+          "image": {
+            "type": "array",
+            "data": {
+              "url": {
+                "type": "string",
+                "allowedTags": "",
+                "required": false
+              }
+            },
+            "required": false
+          }
         }
-        }
-          
-          
       }
-        },
-    "warning":{
-            "title": {
+    },
+    "warning": {
+      "title": {
         "type": "string",
         "allowedTags": "",
-        "required": true        
+        "required": true
       },
-        "message": {
+      "message": {
         "type": "string",
         "allowedTags": "",
-        "required": true        
+        "required": true
       }
-      
-        },
-        
+    },
     "header": {
       "text": {
         "type": "string",
         "allowedTags": "",
-        "required": true        
+        "required": true
       },
       "level": {
         "type": "int",
-        "canBeOnly": [2, 3, 4,5,6,7,8],
-       "required": true         
+        "canBeOnly": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "required": true
       }
     },
-    "delimiter":{
-        },
+    "delimiter": {
+    },
+    "code": {
+      "code": {
+        "type": "string",
+        "allowedTags": ""
+      }
+    },
     "paragraph": {
       "text": {
         "type": "string",
         "allowedTags": "i,b,u,a[href]"
       }
     },
-   
+    "checklist": {
+      "items": {
+        "type": "array",
+        "data": {
+          "-": {
+            "type": "array",
+            "data": {
+              "text": {
+                "type": "string",
+                "allowedTags": ""
+              },
+              "checked": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
     "list": {
       "style": {
         "type": "string",
-        "canBeOnly": ["ordered", "unordered"]
+        "canBeOnly": [
+          "ordered",
+          "unordered"
+        ]
       },
       "items": {
         "type": "array",
@@ -112,11 +206,13 @@
       },
       "alignment": {
         "type": "string",
-        "canBeOnly": ["left", "center"]
+        "canBeOnly": [
+          "left",
+          "center"
+        ]
       }
     },
     "table": {
-      
       "content": {
         "type": "array",
         "data": {

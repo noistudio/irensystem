@@ -481,6 +481,9 @@ export default {
         app.addPost();
       } else if (app.modal_params.type && app.modal_params.type == "post_edit") {
         app.editPost();
+      } else if (app.modal_params.type && app.modal_params.type == "login") {
+        app.modal_params = {};
+        app.addProject(false);
       } else {
         app.addProject();
       }
@@ -574,7 +577,7 @@ export default {
           table: {
             class: require('@editorjs/table'),
           },
-          raw: require('@editorjs/raw'),
+
           delimiter: require('@editorjs/delimiter'),
           quote: {
             class: require('@editorjs/quote'),
