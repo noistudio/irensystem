@@ -2,8 +2,12 @@
 
 namespace App\Console;
 
+use App\FileUpload;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Leonied7\Yandex\Disk;
 
 class Kernel extends ConsoleKernel
 {
@@ -19,11 +23,18 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
+
+        $schedule->call(
+            function () {
+                FileUpload::moveToYandexDisk();
+            }
+        )->everyMinute();
+
         // $schedule->command('inspire')
         //          ->hourly();
     }

@@ -37,8 +37,6 @@ class Freelance extends Controller
         )->where("last_id", $project_id)->first();
 
 
-
-
         if (!$project) {
             return array('type' => 'error', 'err_code' => 'project_not_found', 'message' => 'Проект не найден!');
         }
@@ -160,7 +158,7 @@ class Freelance extends Controller
 
         $new_comment = new OfferComment();
         $new_comment->user_id = $me->last_id;
-        $new_comment->comment = $form['comment'];
+        $new_comment->comment = strip_tags($form['comment']);
         $new_comment->offer_id = $offer_id;
         $new_comment->save();
 
@@ -245,7 +243,7 @@ class Freelance extends Controller
         $project_offer->price = $form['price'];
         $project_offer->currency = $form['currency'];
         $project_offer->date_end = $form['date_end'];
-        $project_offer->comment = $form['comment'];
+        $project_offer->comment = strip_tags($form['comment']);
         $project_offer->save();
         $project_offer->load("developer");
 

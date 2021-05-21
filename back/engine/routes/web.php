@@ -12,13 +12,15 @@
  */
 
 
-
 Route::get("/", "\\managers\\frontend\\controllers\\SiteController@actionIndex")->name("frontend/");
 
-Route::get("/citycurrent", "\\managers\\frontend\\controllers\\SiteController@actionCityCurrent")->name("frontend/citycurrent");
+Route::get("/citycurrent", "\\managers\\frontend\\controllers\\SiteController@actionCityCurrent")->name(
+    "frontend/citycurrent"
+);
 
-Route::get("/savecity/{last_id}", "\\managers\\frontend\\controllers\\SiteController@actionSaveCity")->name("frontend/savecity");
-
+Route::get("/savecity/{last_id}", "\\managers\\frontend\\controllers\\SiteController@actionSaveCity")->name(
+    "frontend/savecity"
+);
 
 
 $dynamic_route = new core\DynamicRoute();
@@ -33,7 +35,7 @@ $run_on_end = array();
 if (isset($routes) and is_array($routes) and count($routes) > 0) {
     foreach ($routes as $route) {
         if (!(isset($route['on_end']))) {
-            $name = $manager . $route['inner'];
+            $name = $manager.$route['inner'];
 
             $first_char = $route['inner_link'][0];
             if ($first_char == "/") {
@@ -60,66 +62,123 @@ if ($first_char == "/") {
 }
 
 
-Route::any($admin_url . "/", "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/");
-Route::any($admin_url, "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend");
+Route::get($admin_url."/editor/fetchUrl", "\\managers\\backend\\controllers\\EditorjsBackend@fetchUrl")->name(
+    "back.editorjs.fetchUrl"
+);
+Route::post($admin_url."/editor/uploadImage", "\\managers\\backend\\controllers\\EditorjsBackend@uploadImage")->name(
+    "back.editorjs.uploadImage"
+);
+Route::post($admin_url."/editor/uploadFile", "\\managers\\backend\\controllers\\EditorjsBackend@uploadFile")->name(
+    "back.editorjs.uploadFile"
+);
+Route::any($admin_url."/", "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/");
+Route::any($admin_url, "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend");
 
-Route::any($admin_url . "/index", "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/index");
+Route::any($admin_url."/index", "\\managers\\backend\\controllers\\DefaultBackend@actionIndex")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/index");
 
-
-Route::any($admin_url . "/backup", "\\managers\\backend\\controllers\\BackupBackend@actionIndex")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup");
-Route::any($admin_url . "/createbackup", "\\managers\\backend\\controllers\\BackupBackend@actionCreate")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/create");
-Route::any($admin_url . "/createonlydb", "\\managers\\backend\\controllers\\BackupBackend@actionCreateonlyDB")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/createonlydb");
-
-
-Route::any($admin_url . "/backup/delete/{filename}", "\\managers\\backend\\controllers\\BackupBackend@actionDelete")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/delete");
-
-Route::any($admin_url . "/download/{filename}", "\\managers\\backend\\controllers\\BackupBackend@actionDownload")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/download");
-
-Route::any($admin_url . "/setup", "\\managers\\backend\\controllers\\SetupBackend@actionIndex")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/setup");
-Route::any($admin_url . "/setup/save", "\\managers\\backend\\controllers\\SetupBackend@actionSave")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/setup/save");
-
-
-Route::any($admin_url . "/logout", "\\managers\\backend\\controllers\\DefaultBackend@actionLogout")->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/logout");
-Route::any($admin_url . "/val/{one?}/{two?}", "\\managers\\backend\\controllers\\DefaultBackend@actionVal")->middleware(env("BACKEND_MIDDLEWARE"));
-
-Route::any($admin_url . "/login", "\\managers\\backend\\controllers\\LoginBackend@actionIndex")->name("backend/login/index");
-Route::any($admin_url . "/doit", "\\managers\\backend\\controllers\\LoginBackend@actionDoit")->name("backend/login/doit");
-Route::any($admin_url . "/about", "\\managers\\backend\\controllers\\AboutBackend@actionIndex")->name("about");
-
-Route::get($admin_url . '/manifest.json', '\\managers\\backend\\controllers\\DefaultBackend@manifestJson')
-        ->name('laravelpwa.manifest');
-
-Route::any($admin_url . "/superblock", function() {
-    $request = Request::create("/adminsystem/blocks/update/2", 'GET', array());
-    return Route::dispatch($request)->getContent();
-});
-
-Route::get($admin_url . '/setlanguage/{locale}', function ($locale) {
-    \cache\models\Model::removeAll();
-
-    languages\models\LanguageHelp::set($locale);
-    return back();
-    //
-})->name("backend/setlanguage");
-
-
-Route::get('/setlang/{locale}', function ($locale) {
+Route::any(
+    $admin_url."/proj/save/{id}",
+    "\\managers\\backend\\controllers\\ProjectBackend@save"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend.project.save");
+Route::any(
+    $admin_url."/post/save/{id}",
+    "\\managers\\backend\\controllers\\PostBackend@save"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend.post.save");
+Route::any(
+    $admin_url."/work/save/{id}",
+    "\\managers\\backend\\controllers\\WorkBackend@save"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend.work.save");
+Route::any($admin_url."/backup", "\\managers\\backend\\controllers\\BackupBackend@actionIndex")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/backup");
+Route::any($admin_url."/createbackup", "\\managers\\backend\\controllers\\BackupBackend@actionCreate")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/backup/create");
+Route::any(
+    $admin_url."/createonlydb",
+    "\\managers\\backend\\controllers\\BackupBackend@actionCreateonlyDB"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/createonlydb");
 
 
-    languages\models\LanguageHelp::set($locale);
-    return back();
-    //
-})->name("frontend/setlanguage");
+Route::any(
+    $admin_url."/backup/delete/{filename}",
+    "\\managers\\backend\\controllers\\BackupBackend@actionDelete"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/delete");
+
+Route::any(
+    $admin_url."/download/{filename}",
+    "\\managers\\backend\\controllers\\BackupBackend@actionDownload"
+)->middleware(env("BACKEND_MIDDLEWARE"))->name("backend/backup/download");
+
+Route::any($admin_url."/setup", "\\managers\\backend\\controllers\\SetupBackend@actionIndex")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/setup");
+Route::any($admin_url."/setup/save", "\\managers\\backend\\controllers\\SetupBackend@actionSave")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/setup/save");
 
 
+Route::any($admin_url."/logout", "\\managers\\backend\\controllers\\DefaultBackend@actionLogout")->middleware(
+    env("BACKEND_MIDDLEWARE")
+)->name("backend/logout");
+Route::any($admin_url."/val/{one?}/{two?}", "\\managers\\backend\\controllers\\DefaultBackend@actionVal")->middleware(
+    env("BACKEND_MIDDLEWARE")
+);
+
+Route::any($admin_url."/login", "\\managers\\backend\\controllers\\LoginBackend@actionIndex")->name(
+    "backend/login/index"
+);
+Route::any($admin_url."/doit", "\\managers\\backend\\controllers\\LoginBackend@actionDoit")->name("backend/login/doit");
+Route::any($admin_url."/about", "\\managers\\backend\\controllers\\AboutBackend@actionIndex")->name("about");
+
+Route::get($admin_url.'/manifest.json', '\\managers\\backend\\controllers\\DefaultBackend@manifestJson')
+    ->name('laravelpwa.manifest');
+
+Route::any(
+    $admin_url."/superblock",
+    function () {
+        $request = Request::create("/adminsystem/blocks/update/2", 'GET', array());
+
+        return Route::dispatch($request)->getContent();
+    }
+);
+
+Route::get(
+    $admin_url.'/setlanguage/{locale}',
+    function ($locale) {
+        \cache\models\Model::removeAll();
+
+        languages\models\LanguageHelp::set($locale);
+
+        return back();
+        //
+    }
+)->name("backend/setlanguage");
 
 
+Route::get(
+    '/setlang/{locale}',
+    function ($locale) {
+
+
+        languages\models\LanguageHelp::set($locale);
+
+        return back();
+        //
+    }
+)->name("frontend/setlanguage");
 
 
 if (isset($run_on_end) and is_array($run_on_end) and count($run_on_end) > 0) {
     foreach ($routes as $route) {
         if ((isset($route['on_end']))) {
-            $name = $manager . $route['inner'];
+            $name = $manager.$route['inner'];
             $first_char = $route['inner_link'][0];
             if ($first_char == "/") {
                 $route['inner_link'] = ltrim($route['inner_link'], $route['inner_link'][0]);

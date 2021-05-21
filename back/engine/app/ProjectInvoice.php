@@ -16,4 +16,14 @@ class ProjectInvoice extends Model
     {
         return $this->hasOne(Invoice::class, "last_id", "final_invoice_id");
     }
+
+    public function developer()
+    {
+        return $this->hasOne(User::class, "last_id", "developer_id");
+    }
+
+    public function client()
+    {
+        return $this->hasOne(User::class, "last_id", "client_id");
+    }
 }

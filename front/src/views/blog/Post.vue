@@ -40,7 +40,8 @@
               Назад
             </router-link>
           </h2>
-          <div class="row mt-3 ml-3">
+
+          <div class="row mt-3 ml-3" v-if="post_data.user.isdeveloper==1">
             <div class="col-md-2 ">
               <router-link v-if="post_data.user.isdeveloper==1"
                            :to="{name: 'developer', params: { username: post_data.user.username }}">
@@ -155,6 +156,7 @@
                         </div>
                       </div>
                     </sui-comment>
+
                   </sui-comment-group>
                 </sui-comment>
 
@@ -175,6 +177,12 @@
                     <label for="exampleTitle"></label>
                     <button class=" btn btn-success" @click="sendComment">Отправить комментарий</button>
                   </div>
+                </div>
+
+                <div class="row pt-2 pb-2" v-if="islogin==false">
+                  <button class="btn btn-warning" @click="callModalLogin">
+                    Войдите чтобы оставить комментарий
+                  </button>
                 </div>
 
 
@@ -252,6 +260,12 @@ export default {
 
   },
   methods: {
+    callModalLogin() {
+      eventBus.$emit("call_modal_add_project", {type: "login",})
+      {
+
+      }
+    },
     toogleEnable() {
       var app = this;
       Api.changeEnablePost(app.post_data.last_id, function (data) {

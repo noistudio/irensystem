@@ -2,9 +2,11 @@
 
 namespace blocks;
 
-class config extends \core\AbstractConfig {
+class config extends \core\AbstractConfig
+{
 
-    function __construct($status = true, $routes = null) {
+    function __construct($status = false, $routes = null)
+    {
         parent::__construct($status, $routes);
     }
 

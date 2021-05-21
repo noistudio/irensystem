@@ -4,27 +4,27 @@ namespace content\events;
 
 use adminmenu\events\EventAdminLink;
 
-class ListenerAdminLink {
+class ListenerAdminLink
+{
 
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         //
     }
 
     /**
      * Handle the event.
      *
-     * @param  TestEvent  $event
+     * @param TestEvent $event
      * @return void
      */
-    public function handle(EventAdminLink $event) {
-
-
-
+    public function handle(EventAdminLink $event)
+    {
 
 
         $subs = array();
@@ -35,15 +35,32 @@ class ListenerAdminLink {
         if (!(isset($params['ismongodb']) and $params['ismongodb'] == true)) {
             $listtables = \db\JsonQuery::all("tables", "title", "ASC");
             if (count($listtables)) {
+                $available_tables = array(
+                    'blog_categorys',
+                    'blog_posts',
+                    'proj_portfolio',
+                    'proj_portfolio_categorys',
+                    'proj_categorys',
+                    'about',
+                    'blog_categorys_access',
+                    'proj_users',
+                    'proj_projects',
+                    'proj_statuses',
+                    'pages',
+                    'proj_users_categorys',
+                );
                 foreach ($listtables as $table) {
-                    $subs[] = array(
-                        'href' => 'content/manage/index/' . $table->name,
-                        'title' => $table->title,
-                        'nav' => $table->name,
-                        'name_rule' => array("content_" . $table->name, "allcontent"),
-                        'onlyroot' => false,
-                        'icon' => 'fa-pencil',
-                    );
+                    if (in_array($table->name, $available_tables)) {
+
+                        $subs[] = array(
+                            'href' => 'content/manage/index/'.$table->name,
+                            'title' => $table->title,
+                            'nav' => $table->name,
+                            'name_rule' => array("content_".$table->name, "allcontent"),
+                            'onlyroot' => false,
+                            'icon' => 'fa-pencil',
+                        );
+                    }
                 }
             }
         }
@@ -66,31 +83,7 @@ class ListenerAdminLink {
 //        }
 
 
-
         $event->add('#', __("backend/admin_links.content"), "content", "", false, "fa-pencil-square-o", $subs);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         return true;

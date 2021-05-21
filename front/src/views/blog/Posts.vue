@@ -27,6 +27,9 @@
               <div class="row">
                 <button type="danger" class="btn btn-danger" v-if="islogin" @click="callWritePost">Написать пост
                 </button>
+                <button type="danger" class="btn btn-danger" v-if="islogin==false" @click="callModalLogin">
+                  Авторизуйтесь,чтобы написать пост
+                </button>
               </div>
 
 
@@ -132,6 +135,12 @@ export default {
     app.loadPosts();
   },
   methods: {
+    callModalLogin() {
+      eventBus.$emit("call_modal_add_project", {type: "login",})
+      {
+
+      }
+    },
     loadPosts() {
       var app = this;
       Api.loadPosts(20, app.current, function (data) {

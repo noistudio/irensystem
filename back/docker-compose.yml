@@ -5,6 +5,7 @@ services:
     ports:
       - "${WWW_PORT}:80"
     volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
       - ./:/var/www/html/
     links:
       - db

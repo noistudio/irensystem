@@ -17,6 +17,7 @@ use App\Status;
 use App\User;
 use App\UserCategory;
 use Carbon\Carbon;
+use EditorJS\EditorJS;
 
 class Projects extends Controller
 {
@@ -512,7 +513,7 @@ class Projects extends Controller
         )->where("last_id", $id)->first();
 
         if (!$project) {
-            return array('type' => 'error', 'message' => 'Проект не найден!');
+            return array('type' => 'error', 'error_key' => 'project_not_found', 'message' => 'Проект не найден!');
         }
         $role = "client";
         if ($project->developer_id == $user_id) {
@@ -573,6 +574,35 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
+
+        if (isset($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+            foreach ($form['json']['blocks'] as $key => $block) {
+
+                if ($block['type'] == "image" and ((isset($block['data']['caption']) and mb_strlen(
+                                $block['data']['caption']
+                            ) == 0) or (isset($block['data']['caption']) and is_null($block['data']['caption'])))) {
+                    unset($block['data']['caption']);
+                }
+                $form['json']['blocks'][$key] = $block;
+            }
+
+        }
+
+        $result_config = \editjs\models\BlocksModel::getConfig();
+
+
+        try {
+            $editor = new EditorJS(json_encode($form['json']), $result_config['config']);
+        } catch (\Exception $e) {
+            return array(
+                'type' => 'error',
+                'error_key' => 'text_not_filled',
+                'message' => $e->getMessage(),
+            );
+
+        }
+
+
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']
             ) > 0) {
@@ -667,6 +697,34 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
+
+        if (isset($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+            foreach ($form['json']['blocks'] as $key => $block) {
+
+                if ($block['type'] == "image" and ((isset($block['data']['caption']) and mb_strlen(
+                                $block['data']['caption']
+                            ) == 0) or (isset($block['data']['caption']) and is_null($block['data']['caption'])))) {
+                    unset($block['data']['caption']);
+                }
+                $form['json']['blocks'][$key] = $block;
+            }
+
+        }
+
+        $result_config = \editjs\models\BlocksModel::getConfig();
+
+
+        try {
+            $editor = new EditorJS(json_encode($form['json']), $result_config['config']);
+        } catch (\Exception $e) {
+            return array(
+                'type' => 'error',
+                'error_key' => 'text_not_filled',
+                'message' => $e->getMessage(),
+            );
+
+        }
+
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']
             ) > 0) {
@@ -720,6 +778,38 @@ class Projects extends Controller
         $header = null;
         $image = null;
         $description = "";
+
+        if (isset($form['json']['blocks']) and count($form['json']['blocks']) > 0) {
+            foreach ($form['json']['blocks'] as $key => $block) {
+
+                if ($block['type'] == "image" and ((isset($block['data']['caption']) and mb_strlen(
+                                $block['data']['caption']
+                            ) == 0) or (isset($block['data']['caption']) and is_null($block['data']['caption'])))) {
+                    unset($block['data']['caption']);
+                }
+                $form['json']['blocks'][$key] = $block;
+            }
+
+        }
+
+        $result_config = \editjs\models\BlocksModel::getConfig();
+
+
+        try {
+            $editor = new EditorJS(json_encode($form['json']), $result_config['config']);
+        } catch (\Exception $e) {
+            return array(
+                'type' => 'error',
+                'error_key' => 'text_not_filled',
+                'message' => $e->getMessage(),
+            );
+
+        }
+
+
+
+
+
         if (isset($form['json']['blocks']) and is_array($form['json']['blocks']) and count(
                 $form['json']['blocks']
             ) > 0) {

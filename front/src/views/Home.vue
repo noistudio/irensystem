@@ -59,7 +59,7 @@
                 <div class="row mt-2"
                      v-if="(current_status==null || (current_status!=null && project.status==current_status)) && project_index>=(((projects_table.current_page*projects_table.on_page)-projects_table.on_page)-1) && project_index<=((projects_table.current_page*projects_table.on_page)-1)"
                      v-for="(project,project_index) in projects" :key="project.last_id">
-                  <div class="col-lg-7">
+                  <div class="col-lg-7 text-truncate">
                     <router-link class="text-clip" :to="{name: 'project', params: { id: project.last_id }}">
                       <base-button type="primary" class="text-clip" v-html="project.name_project">
 

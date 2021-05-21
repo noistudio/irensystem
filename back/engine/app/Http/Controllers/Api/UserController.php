@@ -9,6 +9,15 @@ use pschocke\TelegramLoginWidget\Facades\TelegramLoginWidget;
 class UserController extends Controller
 {
 
+    public function user_ban()
+    {
+        $array = array();
+        $array['type'] = "error";
+        $array['error_key'] = "user_is_ban";
+        $array['message'] = "Вы были забанены, такие дела";
+
+        return $array;
+    }
 
     public function Login()
     {
@@ -21,7 +30,7 @@ class UserController extends Controller
             return array('type' => 'error', 'message' => 'Авторизация не удалась.Попробуйте указать Имя в Telegram');
         }
 
-        
+
         $result = Telegram::checkTelegramAuthorization($post);
 
 

@@ -3,6 +3,9 @@
 //
 // Base styles
 //
+.text_clip {
+  text-overflow: ellipsis !important;
+}
 
 .btn {
   display: inline-block;

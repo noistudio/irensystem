@@ -23,3 +23,5 @@ yarn-error.log*
 /vue.register_service.config.js
 /vue.custom.config_dev.js
 /vue.register_service.config_dev.js
+/vue.custom.config_prod.js
+/vue.register_service.config_prod.js
