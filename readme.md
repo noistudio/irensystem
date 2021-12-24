@@ -1,3 +1,7 @@
+IrenSystem Plus
+Access to a unique system for business, which combines in a single system, all modules for advanced sales management, support for existing customers, full control of the workflow as in jira
+  attracting new clients from any sources, advanced separation of rights for a client, manager, performer, full integration with telegram
+
 IrenSystem - это проект который впитал в себя весь опыт что требуется фрилансеру для организации своего бизнеса
 в интернете.
 
